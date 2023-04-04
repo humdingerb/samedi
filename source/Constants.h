@@ -16,8 +16,8 @@
 #define MUTE 'mute'
 #define SOLO 'solo'
 #define LOOP 'loop'
-#define OPENSAMPLE 'open'
-#define PLAYSTOP 'plst'
+#define OPEN 'open'
+#define PLAY 'plst'
 #define EJECT 'ejec'
 
 static const int kPadCount = 8;

@@ -32,7 +32,7 @@ private:
 	BButton*		fSolo;
 	BButton*		fLoop;
 	BButton*		fOpenSample;
-	BButton*		fPlayStop;
+	BButton*		fPlay;
 	BButton*		fEject;
 
 	BStringView*	fSampleName;

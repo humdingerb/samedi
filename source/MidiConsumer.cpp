@@ -39,10 +39,9 @@ MidiConsumer::NoteOn(uchar channel, uchar note, uchar velocity, bigtime_t time)
 	printf("%lu: [Producer %d][Channel %d / Note %d]  Note on with velocity %d\n", time, id,
 		channel, note, velocity);
 
-	BMessage* msg = new BMessage(PLAYSAMPLE);
+	BMessage* msg = new BMessage(PLAY);
 	for (int32 i = 0; i < kPadCount; i++) {
 		if (note == fConfig->note[i]) {
-			printf("hit!\n");
 			fPlayers[i]->StartPlaying();
 
 			msg->AddInt32("pad", i);

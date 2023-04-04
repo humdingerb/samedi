@@ -95,12 +95,54 @@ MainWindow::MessageReceived(BMessage* msg)
 			_HandleMIDI(msg);
 			break;
 		}
-		case PLAYSAMPLE:
+		case NOTE:
+		{
+			int32 pad = -1;
+			int32 note = -1;
+			msg->FindInt32("pad", &pad);
+			msg->FindInt32("note", &note);
+			fPlayerConfig->note[pad] = note;
+			break;
+		}
+		case MUTE:
+		{
+			int32 pad = -1;
+			int32 on_off = -1;
+			msg->FindInt32("pad", &pad);
+			msg->FindInt32("mute", &on_off);
+			fPlayerConfig->mute[pad] = on_off;
+			break;
+		}
+		case SOLO:
+		{
+			int32 pad = -1;
+			int32 on_off = -1;
+			msg->FindInt32("pad", &pad);
+			msg->FindInt32("solo", &on_off);
+			fPlayerConfig->solo[pad] = on_off;
+			break;
+		}
+		case LOOP:
+		{
+			int32 pad = -1;
+			int32 on_off = -1;
+			msg->FindInt32("pad", &pad);
+			msg->FindInt32("loop", &on_off);
+			fPlayerConfig->loop[pad] = on_off;
+			break;
+		}
+		case PLAY:
 		{
 			int32 pad = -1;
 			msg->FindInt32("pad", &pad);
 			printf("Pad %i: Ding!\n", pad);
 		}
+		case EJECT:
+		{
+			break;
+		}
+
+
 		default:
 		{
 			BWindow::MessageReceived(msg);
