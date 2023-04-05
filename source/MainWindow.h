@@ -51,6 +51,8 @@ private:
 	BMessenger*		fMessenger;
 	BMidiRoster*	fRoster;
 	MidiConsumer*	fConsumer;
+
+	int32			fSoloPad;
 };
 
 #endif /* MAINWINDOW_H */

@@ -174,6 +174,13 @@ Pad::Mute(int32 state)
 
 
 void
+Pad::Solo(int32 state)
+{
+	fSolo->SetValue(state);
+}
+
+
+void
 Pad::SetSampleName(const char* sample)
 {
 	fSample->SetLabel(sample);

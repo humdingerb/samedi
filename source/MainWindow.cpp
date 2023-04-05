@@ -30,7 +30,8 @@ MainWindow::MainWindow()
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
-	fOpenPanel(new BFilePanel(B_OPEN_PANEL))
+	fOpenPanel(new BFilePanel(B_OPEN_PANEL)),
+	fSoloPad(-1)
 {
 	fPlayerConfig = new playerConfig;
 
@@ -130,13 +131,26 @@ MainWindow::MessageReceived(BMessage* msg)
 			msg->FindInt32("solo", &on_off);
 
 			if (on_off == B_CONTROL_ON) {
+				// if we already have a solo pad, unset its solo button
+				if (fSoloPad != -1)
+					fPads[fSoloPad]->Solo(B_CONTROL_OFF);
+
+				fSoloPad = pad;
 				for (int32 i = 0; i < kPadCount; i++) {
-					fPlayerConfig->mute[i] = true;
-					fPads[i]->Mute(B_CONTROL_ON);
+					// mute all other pads
+					if (i != pad) {
+						fPlayerConfig->mute[i] = true;
+						fPads[i]->Mute(B_CONTROL_ON);
+					}
+					// unmute the solo pad
+					else {
+						fPlayerConfig->mute[i] = false;
+						fPads[i]->Mute(B_CONTROL_OFF);
+					}
 				}
-				fPlayerConfig->mute[pad] = false;
-				fPads[pad]->Mute(B_CONTROL_OFF);
 			} else {
+				fPads[fSoloPad]->Solo(B_CONTROL_OFF);
+				fSoloPad = -1;
 				for (int32 i = 0; i < kPadCount; i++) {
 					fPlayerConfig->mute[i] = false;
 					fPads[i]->Mute(B_CONTROL_OFF);
