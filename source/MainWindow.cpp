@@ -34,12 +34,12 @@ MainWindow::MainWindow()
 {
 	fPlayerConfig = new playerConfig;
 
-	for (int32 i = 0; i < kPadCount; i++)
-		fPads[i] = new Pad(i, fPlayerConfig->note[i]);
-
+	// init pads, player-config and players
 	const char* path = "/HiQ-Data/audio/soundeffects/notify.wav";
 	for (int32 i = 0; i < kPadCount; i++) {
+		fPads[i] = new Pad(i, fPlayerConfig->note[i]);
 		fPlayerConfig->sample[i] = path;
+		fPlayers[i] = NULL;
 		_SetSample(i);
 	}
 
@@ -128,7 +128,20 @@ MainWindow::MessageReceived(BMessage* msg)
 			int32 on_off = -1;
 			msg->FindInt32("pad", &pad);
 			msg->FindInt32("solo", &on_off);
-			fPlayerConfig->solo[pad] = on_off;
+
+			if (on_off == B_CONTROL_ON) {
+				for (int32 i = 0; i < kPadCount; i++) {
+					fPlayerConfig->mute[i] = true;
+					fPads[i]->Mute(B_CONTROL_ON);
+				}
+				fPlayerConfig->mute[pad] = false;
+				fPads[pad]->Mute(B_CONTROL_OFF);
+			} else {
+				for (int32 i = 0; i < kPadCount; i++) {
+					fPlayerConfig->mute[i] = false;
+					fPads[i]->Mute(B_CONTROL_OFF);
+				}
+			}
 			break;
 		}
 		case LOOP:
@@ -138,6 +151,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			msg->FindInt32("pad", &pad);
 			msg->FindInt32("loop", &on_off);
 			fPlayerConfig->loop[pad] = on_off;
+			_SetSample(pad);
 			break;
 		}
 		case PLAY:
@@ -145,7 +159,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			int32 note = -1;
 			msg->FindInt32("note", &note);
 			for (int32 i = 0; i < kPadCount; i++) {
-				if (note == fPlayerConfig->note[i])
+				if (note == fPlayerConfig->note[i] and fPlayerConfig->mute[i] == false)
 					fPlayers[i]->StartPlaying();
 			}
 			break;
@@ -155,6 +169,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			int32 pad = -1;
 			msg->FindInt32("pad", &pad);
 			fPlayerConfig->sample[pad] = "";
+			_SetSample(pad);
 			break;
 		}
 		case OPEN:
@@ -192,9 +207,14 @@ MainWindow::MessageReceived(BMessage* msg)
 void
 MainWindow::_SetSample(int32 pad)
 {
+	if (fPlayers[pad] != NULL)
+		delete fPlayers[pad];
+
 	entry_ref ref;
 	::get_ref_for_path(fPlayerConfig->sample[pad], &ref);
-	fPlayers[pad] = new BFileGameSound(&ref, false);
+	bool loop = fPlayerConfig->loop[pad];
+
+	fPlayers[pad] = new BFileGameSound(&ref, loop);
 	if (fPlayers[pad]->InitCheck() == B_OK) {
 		fPlayers[pad]->Preload();
 		BPath path(&ref);
@@ -234,9 +254,6 @@ MainWindow::_PrintConfig()
 		printf("\nmute:\t");
 		for (int32 j = 0; j < kPadCount; j++)
 			printf("%i, ", fPlayerConfig->mute[j]);
-		printf("\nsolo:\t");
-		for (int32 j = 0; j < kPadCount; j++)
-			printf("%i, ", fPlayerConfig->solo[j]);
 		printf("\nloop:\t");
 		for (int32 j = 0; j < kPadCount; j++)
 			printf("%i, ", fPlayerConfig->loop[j]);

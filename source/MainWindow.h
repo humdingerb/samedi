@@ -21,9 +21,8 @@
 #include <Window.h>
 
 struct playerConfig {
-	int32 note[kPadCount] = { 43, 44, 45, 46, 47, 48, 49, 50 };
+	int32 note[kPadCount] = { 44, 45, 46, 47, 48, 49, 50, 51 };
 	bool mute[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	bool solo[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	bool loop[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	const char* sample[kPadCount] = { "", "", "", "", "", "", "", "",  };
 };
@@ -38,6 +37,7 @@ public:
 
 private:
 	void			_SetSample(int32 pad);
+
 	void			_HandleMIDI(BMessage* msg);
 	void		_PrintConfig();		// for debugging
 

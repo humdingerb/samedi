@@ -160,6 +160,16 @@ Pad::MessageReceived(BMessage* msg)
 }
 
 
+// #pragma mark -
+
+
+void
+Pad::Mute(int32 state)
+{
+	fMute->SetValue(state);
+}
+
+
 void
 Pad::SetSampleName(const char* sample)
 {

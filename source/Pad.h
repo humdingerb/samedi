@@ -25,6 +25,7 @@ public:
 	virtual	void	AttachedToWindow();
 	void			MessageReceived(BMessage* msg);
 
+	void			Mute(int32 state);
 	void			SetSampleName(const char* sample);
 
 private:
