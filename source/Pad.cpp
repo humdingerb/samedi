@@ -50,6 +50,7 @@ Pad::Pad(int32 number, int32 note)
 
 	fSample = new BButton("sample", kNoSample, new BMessage(OPEN));
 	fSample->SetFlat(true);
+	fSample->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
 	fPlay = new BButton("⯈" , new BMessage(PLAY));
 	fEject = new BButton("⏏" , new BMessage(EJECT));
@@ -81,7 +82,6 @@ Pad::Pad(int32 number, int32 note)
 		.Add(fLoop)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fSample)
-		.AddGlue()
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fPlay)
 		.Add(fEject)
