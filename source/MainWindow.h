@@ -13,10 +13,19 @@
 #include "MidiConsumer.h"
 #include "Pad.h"
 
+#include <FileGameSound.h>
 #include <Messenger.h>
 #include <MidiProducer.h>
 #include <MidiRoster.h>
 #include <Window.h>
+
+struct playerConfig {
+	uchar note[kPadCount] = { 43, 44, 45, 46, 47, 48, 49, 50 };
+	bool mute[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	bool solo[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	bool loop[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	const char* sample[kPadCount] = { "", "", "", "", "", "", "", "",  };
+};
 
 
 class MainWindow : public BWindow {
@@ -26,12 +35,13 @@ public:
 
 	void			MessageReceived(BMessage* msg);
 
-	playerConfig*	fPlayerConfig;
-
 private:
 	void			_HandleMIDI(BMessage* msg);
 
 	Pad*			fPads[kPadCount];
+
+	BFileGameSound*	fPlayers[kPadCount];
+	playerConfig*	fPlayerConfig;
 
 	BMessenger*		fMessenger;
 	BMidiRoster*	fRoster;

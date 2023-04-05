@@ -29,40 +29,27 @@ Pad::Pad(int32 number, uchar note)
 	text << fPadNumber + 1;
 	BStringView* pad = new BStringView("pad", text);
 
-	BMessage* msg = new BMessage(NOTE);
-	msg->AddInt32("pad", fPadNumber);
 	text = "";
 	text << fNote;
-	fNoteControl = new BTextControl("notecontrol", NULL, text, msg);
+	fNoteControl = new BTextControl("notecontrol", NULL, text, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
-	msg = new BMessage(MUTE);
-	msg->AddInt32("pad", fPadNumber);
-	fMute = new BButton("M", msg);
+	fMute = new BButton("M", new BMessage(MUTE));
 	fMute->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fMute->SetToolTip(B_TRANSLATE("Mute"));
 
-	msg = new BMessage(SOLO);
-	msg->AddInt32("pad", fPadNumber);
-	fSolo = new BButton("S" , msg);
+	fSolo = new BButton("S" , new BMessage(SOLO));
 	fSolo->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fSolo->SetToolTip(B_TRANSLATE("Solo"));
 
-	msg = new BMessage(LOOP);
-	msg->AddInt32("pad", fPadNumber);
-	fLoop = new BButton("∞" , msg);
+	fLoop = new BButton("∞" , new BMessage(LOOP));
 	fLoop->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fLoop->SetToolTip(B_TRANSLATE("Loop"));
 
 	fSampleName = new BStringView("samplename", kNoSample);
 
-	msg = new BMessage(PLAY);
-	msg->AddInt32("pad", fPadNumber);
-	fPlay = new BButton("⯈" , msg);
-
-	msg = new BMessage(EJECT);
-	msg->AddInt32("pad", fPadNumber);
-	fEject = new BButton("⏏" , msg);
+	fPlay = new BButton("⯈" , new BMessage(PLAY));
+	fEject = new BButton("⏏" , new BMessage(EJECT));
 
 	// limit button sizes
 	float height;
@@ -137,6 +124,7 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case PLAY:
 		{
+			msg->AddInt32("note", fNote);
 			Window()->PostMessage(msg);
 			break;
 		}
@@ -153,4 +141,3 @@ Pad::MessageReceived(BMessage* msg)
 		}
 	}
 }
-

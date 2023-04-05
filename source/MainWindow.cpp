@@ -32,8 +32,20 @@ MainWindow::MainWindow()
 {
 	fPlayerConfig = new playerConfig;
 
+	const char* path = "/HiQ-Data/audio/soundeffects/notify.wav";
+	for (int32 i = 0; i < kPadCount; i++)
+		fPlayerConfig->sample[i] = path;
+
+	entry_ref ref;
+	for (int32 i = 0; i < kPadCount; i++) {
+		::get_ref_for_path(fPlayerConfig->sample[i], &ref);
+		fPlayers[i] = new BFileGameSound(&ref, false);
+		if (fPlayers[i]->InitCheck() == B_OK)
+			fPlayers[i]->Preload();
+	}
+
 	fMessenger = new BMessenger(this, NULL);
-	fConsumer = new MidiConsumer(fPlayerConfig, fMessenger);
+	fConsumer = new MidiConsumer(fMessenger);
 	fRoster = BMidiRoster::MidiRoster();
 	fRoster->StartWatching(fMessenger);
 
@@ -133,12 +145,19 @@ MainWindow::MessageReceived(BMessage* msg)
 		}
 		case PLAY:
 		{
-			int32 pad = -1;
-			msg->FindInt32("pad", &pad);
-			printf("Pad %i: Ding!\n", pad);
+			int32 note = -1;
+			msg->FindInt32("note", &note);
+			for (int32 i = 0; i < kPadCount; i++) {
+				if (note == fPlayerConfig->note[i])
+					fPlayers[i]->StartPlaying();
+			}
+			break;
 		}
 		case EJECT:
 		{
+			int32 pad = -1;
+			msg->FindInt32("pad", &pad);
+			fPlayerConfig->sample[pad] = "";
 			break;
 		}
 
