@@ -21,7 +21,7 @@
 #include <Window.h>
 
 struct playerConfig {
-	uchar note[kPadCount] = { 43, 44, 45, 46, 47, 48, 49, 50 };
+	int32 note[kPadCount] = { 43, 44, 45, 46, 47, 48, 49, 50 };
 	bool mute[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	bool solo[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	bool loop[kPadCount] = { 0, 0, 0, 0, 0, 0, 0, 0 };

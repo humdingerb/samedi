@@ -19,16 +19,17 @@
 
 class Pad : public BView {
 public:
-					Pad(int32 number, uchar note);
-	virtual			~Pad();
+					Pad(int32 number, int32 note);
+	virtual			~Pad() {};
 
+	virtual	void	AttachedToWindow();
 	void			MessageReceived(BMessage* msg);
 
 	void			SetSampleName(const char* sample);
 
 private:
 	int32			fPadNumber;
-	uchar			fNote;
+	int32			fNote;
 
 	BButton*		fMute;
 	BButton*		fSolo;

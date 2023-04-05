@@ -42,7 +42,6 @@ MainWindow::MainWindow()
 		fPlayerConfig->sample[i] = path;
 		_SetSample(i);
 	}
-_PrintConfig();
 
 	// building layout
 	BMenuBar* menuBar = new BMenuBar("menubar");

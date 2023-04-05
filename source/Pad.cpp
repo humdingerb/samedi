@@ -21,7 +21,7 @@
 static const char* kNoSample = B_TRANSLATE_MARK("<click to load a sample>");
 
 
-Pad::Pad(int32 number, uchar note)
+Pad::Pad(int32 number, int32 note)
 	:
 	BView("pad", B_WILL_DRAW | B_SUPPORTS_LAYOUT),
 	fPadNumber(number),
@@ -86,8 +86,16 @@ Pad::Pad(int32 number, uchar note)
 }
 
 
-Pad::~Pad()
+void
+Pad::AttachedToWindow()
 {
+	fNoteControl->SetTarget(this);
+	fMute->SetTarget(this);
+	fSolo->SetTarget(this);
+	fLoop->SetTarget(this);
+	fSample->SetTarget(this);
+	fPlay->SetTarget(this);
+	fEject->SetTarget(this);
 }
 
 
