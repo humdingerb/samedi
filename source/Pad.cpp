@@ -13,6 +13,8 @@
 #include <Catalog.h>
 #include <LayoutBuilder.h>
 
+#include <stdio.h>
+
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "Pad"
 
@@ -46,7 +48,8 @@ Pad::Pad(int32 number, uchar note)
 	fLoop->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fLoop->SetToolTip(B_TRANSLATE("Loop"));
 
-	fSampleName = new BStringView("samplename", kNoSample);
+	fSample = new BButton("sample", kNoSample, new BMessage(OPEN));
+	fSample->SetFlat(true);
 
 	fPlay = new BButton("⯈" , new BMessage(PLAY));
 	fEject = new BButton("⏏" , new BMessage(EJECT));
@@ -75,7 +78,7 @@ Pad::Pad(int32 number, uchar note)
 		.Add(fSolo)
 		.Add(fLoop)
 		.AddStrut(B_USE_SMALL_SPACING)
-		.Add(fSampleName)
+		.Add(fSample)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fPlay)
 		.Add(fEject)
@@ -122,6 +125,12 @@ Pad::MessageReceived(BMessage* msg)
 			Window()->PostMessage(msg);
 			break;
 		}
+		case OPEN:
+		{
+			msg->AddInt32("note", fNote);
+			Window()->PostMessage(msg);
+			break;
+		}
 		case PLAY:
 		{
 			msg->AddInt32("note", fNote);
@@ -130,7 +139,7 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case EJECT:
 		{
-			fSampleName->SetText(kNoSample);
+			fSample->SetLabel(kNoSample);
 			Window()->PostMessage(msg);
 			break;
 		}
@@ -140,4 +149,11 @@ Pad::MessageReceived(BMessage* msg)
 			break;
 		}
 	}
+}
+
+
+void
+Pad::SetSampleName(const char* sample)
+{
+	fSample->SetLabel(sample);
 }

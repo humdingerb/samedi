@@ -24,6 +24,8 @@ public:
 
 	void			MessageReceived(BMessage* msg);
 
+	void			SetSampleName(const char* sample);
+
 private:
 	int32			fPadNumber;
 	uchar			fNote;
@@ -31,11 +33,10 @@ private:
 	BButton*		fMute;
 	BButton*		fSolo;
 	BButton*		fLoop;
-	BButton*		fOpenSample;
+	BButton*		fSample;
 	BButton*		fPlay;
 	BButton*		fEject;
 
-	BStringView*	fSampleName;
 	BTextControl*	fNoteControl;
 };
 

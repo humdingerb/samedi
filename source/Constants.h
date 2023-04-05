@@ -16,9 +16,10 @@
 #define MUTE 'mute'
 #define SOLO 'solo'
 #define LOOP 'loop'
-#define OPEN 'open'
 #define PLAY 'plst'
 #define EJECT 'ejec'
+#define OPEN 'open'
+#define LOAD 'load'
 
 static const int kPadCount = 8;
 static const int kDefaultNote = 43;

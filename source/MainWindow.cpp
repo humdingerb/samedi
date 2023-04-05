@@ -14,6 +14,7 @@
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
+#include <Path.h>
 #include <ScrollView.h>
 #include <SeparatorView.h>
 
@@ -28,26 +29,20 @@ MainWindow::MainWindow()
 	:
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
-			| B_AUTO_UPDATE_SIZE_LIMITS)
+			| B_AUTO_UPDATE_SIZE_LIMITS),
+	fOpenPanel(new BFilePanel(B_OPEN_PANEL))
 {
 	fPlayerConfig = new playerConfig;
 
-	const char* path = "/HiQ-Data/audio/soundeffects/notify.wav";
 	for (int32 i = 0; i < kPadCount; i++)
-		fPlayerConfig->sample[i] = path;
+		fPads[i] = new Pad(i, fPlayerConfig->note[i]);
 
-	entry_ref ref;
+	const char* path = "/HiQ-Data/audio/soundeffects/notify.wav";
 	for (int32 i = 0; i < kPadCount; i++) {
-		::get_ref_for_path(fPlayerConfig->sample[i], &ref);
-		fPlayers[i] = new BFileGameSound(&ref, false);
-		if (fPlayers[i]->InitCheck() == B_OK)
-			fPlayers[i]->Preload();
+		fPlayerConfig->sample[i] = path;
+		_SetSample(i);
 	}
-
-	fMessenger = new BMessenger(this, NULL);
-	fConsumer = new MidiConsumer(fMessenger);
-	fRoster = BMidiRoster::MidiRoster();
-	fRoster->StartWatching(fMessenger);
+_PrintConfig();
 
 	// building layout
 	BMenuBar* menuBar = new BMenuBar("menubar");
@@ -55,9 +50,6 @@ MainWindow::MainWindow()
 	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
 	menu->AddItem(menuItem);
 	menuBar->AddItem(menu);
-
-	for (int32 i = 0; i < kPadCount; i++)
-		fPads[i] = new Pad(i, fPlayerConfig->note[i]);
 
 	BView* padView = new BView("padView", 0);
 	BLayoutBuilder::Group<>(padView, B_VERTICAL, 2)
@@ -85,11 +77,17 @@ MainWindow::MainWindow()
 			.SetInsets(-2, -2, -2, -2)
 			.Add(scrollView)
 			.End();
+
+	fMessenger = new BMessenger(this, NULL);
+	fConsumer = new MidiConsumer(fMessenger);
+	fRoster = BMidiRoster::MidiRoster();
+	fRoster->StartWatching(fMessenger);
 }
 
 
 MainWindow::~MainWindow()
 {
+	delete fOpenPanel;
 	delete fMessenger;
 	fConsumer->Release();
 }
@@ -160,13 +158,48 @@ MainWindow::MessageReceived(BMessage* msg)
 			fPlayerConfig->sample[pad] = "";
 			break;
 		}
-
-
+		case OPEN:
+		{
+			int32 pad = -1;
+			msg->FindInt32("pad", &pad);
+			BMessage* openMsg = new BMessage(LOAD);
+			openMsg->AddInt32("pad", pad);
+			fOpenPanel->SetTarget(this);
+			fOpenPanel->SetMessage(openMsg);
+			fOpenPanel->Show();
+			break;
+		}
+		case LOAD:
+		{
+			entry_ref ref;
+			if (msg->FindRef("refs", &ref) == B_OK) {
+				int32 pad = -1;
+				msg->FindInt32("pad", &pad);
+				BPath path(&ref);
+				fPlayerConfig->sample[pad] = path.Path();
+				_SetSample(pad);
+			}
+			break;
+		}
 		default:
 		{
 			BWindow::MessageReceived(msg);
 			break;
 		}
+	}
+}
+
+
+void
+MainWindow::_SetSample(int32 pad)
+{
+	entry_ref ref;
+	::get_ref_for_path(fPlayerConfig->sample[pad], &ref);
+	fPlayers[pad] = new BFileGameSound(&ref, false);
+	if (fPlayers[pad]->InitCheck() == B_OK) {
+		fPlayers[pad]->Preload();
+		BPath path(&ref);
+		fPads[pad]->SetSampleName(path.Leaf());
 	}
 }
 
@@ -188,4 +221,30 @@ MainWindow::_HandleMIDI(BMessage* msg)
 			break;
 		}
 	}
+}
+
+
+void
+MainWindow::_PrintConfig()
+{
+	for (int32 i = 0; i < kPadCount; i++) {
+		printf("Pad: %i\n", i);
+		printf("note:\t");
+		for (int32 j = 0; j < kPadCount; j++)
+			printf("%i, ", fPlayerConfig->note[j]);
+		printf("\nmute:\t");
+		for (int32 j = 0; j < kPadCount; j++)
+			printf("%i, ", fPlayerConfig->mute[j]);
+		printf("\nsolo:\t");
+		for (int32 j = 0; j < kPadCount; j++)
+			printf("%i, ", fPlayerConfig->solo[j]);
+		printf("\nloop:\t");
+		for (int32 j = 0; j < kPadCount; j++)
+			printf("%i, ", fPlayerConfig->loop[j]);
+		printf("\nsample:\t");
+		for (int32 j = 0; j < kPadCount; j++)
+			printf("%s\n", fPlayerConfig->sample[j]);
+		printf("\n");
+	}
+	printf("\n");
 }
