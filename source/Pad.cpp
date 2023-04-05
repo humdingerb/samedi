@@ -54,7 +54,7 @@ Pad::Pad(int32 number, int32 note)
 	fPlay = new BButton("⯈" , new BMessage(PLAY));
 	fEject = new BButton("⏏" , new BMessage(EJECT));
 
-	// limit button sizes
+	// limit widget sizes
 	float height;
 	fNoteControl->GetPreferredSize(NULL, &height);
 	BSize size(height, height);
@@ -68,6 +68,8 @@ Pad::Pad(int32 number, int32 note)
 	size = BSize(width, height);
 	fNoteControl->SetExplicitSize(size);
 
+	fSample->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
+
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING)
 		.Add(pad)
@@ -79,6 +81,7 @@ Pad::Pad(int32 number, int32 note)
 		.Add(fLoop)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fSample)
+		.AddGlue()
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fPlay)
 		.Add(fEject)
