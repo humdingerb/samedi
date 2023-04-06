@@ -30,19 +30,39 @@ MainWindow::MainWindow()
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
-	fOpenPanel(new BFilePanel(B_OPEN_PANEL))
+	fOpenPanel(new BFilePanel(B_OPEN_PANEL)),
+	fSavePanel(new BFilePanel(B_SAVE_PANEL))
 {
 	// init pads
 	for (int32 i = 0; i < kPadCount; i++)
 		fPads[i] = new Pad(i, kDefaultNote + i);
 
-	// building layout
+	// building menu
 	BMenuBar* menuBar = new BMenuBar("menubar");
-	BMenu* menu = new BMenu(B_TRANSLATE_SYSTEM_NAME("Samedi"));
-	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
+	BMenu* menu = new BMenu(B_TRANSLATE("File"));
+
+	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
+		new BMessage(OPEN_ENSEMBLE), 'O');
+	menu->AddItem(menuItem);
+
+	BMenuItem* fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
+	fSaveMenu->SetEnabled(false);
+	menu->AddItem(fSaveMenu);
+
+	menuItem = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
+		new BMessage(SAVEAS_ENSEMBLE), 'S', B_SHIFT_KEY);
+	menu->AddItem(menuItem);
+
+	menu->AddSeparatorItem();
+	menuItem = new BMenuItem(B_TRANSLATE("About Samedi"), new BMessage(B_ABOUT_REQUESTED));
+	menuItem->SetTarget(be_app);
+	menu->AddItem(menuItem);
+
+	menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
 	menu->AddItem(menuItem);
 	menuBar->AddItem(menu);
 
+	// building layout
 	BView* padView = new BView("padView", 0);
 	BLayoutBuilder::Group<>(padView, B_VERTICAL, 0)
 		.Add(fPads[0])
@@ -78,6 +98,7 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
 	delete fOpenPanel;
+	delete fSavePanel;
 	delete fMessenger;
 	fConsumer->Release();
 }
@@ -90,9 +111,26 @@ void
 MainWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
+		case B_SIMPLE_DATA:
+		case B_REFS_RECEIVED:
+		{
+			break;
+		}
 		case B_MIDI_EVENT:
 		{
 			_HandleMIDI(msg);
+			break;
+		}
+		case OPEN_ENSEMBLE:
+		{
+			BMessage* openMsg = new BMessage(B_REFS_RECEIVED);
+			fOpenPanel->SetTarget(this);
+			fOpenPanel->SetMessage(openMsg);
+			fOpenPanel->Show();
+			break;
+		}
+		case SAVEAS_ENSEMBLE:
+		{
 			break;
 		}
 		case SOLO:
@@ -127,11 +165,11 @@ MainWindow::MessageReceived(BMessage* msg)
 			}
 			break;
 		}
-		case OPEN:
+		case OPEN_SAMPLE:
 		{
 			int32 pad;
 			if (msg->FindInt32("pad", &pad) == B_OK) {
-				BMessage* openMsg = new BMessage(LOAD);
+				BMessage* openMsg = new BMessage(LOAD_SAMPLE);
 				openMsg->AddInt32("pad", pad);
 				fOpenPanel->SetTarget(this);
 				fOpenPanel->SetMessage(openMsg);
@@ -139,7 +177,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			}
 			break;
 		}
-		case LOAD:
+		case LOAD_SAMPLE:
 		{
 			entry_ref ref;
 			int32 pad;

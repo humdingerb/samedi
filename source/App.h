@@ -19,6 +19,8 @@ public:
 						App();
 		virtual			~App();
 
+		void			AboutRequested();
+
 private:
 		MainWindow*		fMainWindow;
 };

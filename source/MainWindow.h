@@ -33,6 +33,8 @@ private:
 	Pad*			fPads[kPadCount];
 
 	BFilePanel*		fOpenPanel;
+	BFilePanel*		fSavePanel;
+	BMenuItem*		fSaveMenu;
 
 	BMessenger*		fMessenger;
 	BMidiRoster*	fRoster;

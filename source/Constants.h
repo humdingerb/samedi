@@ -16,8 +16,12 @@
 #define LOOP 'loop'
 #define PLAY 'plst'
 #define EJECT 'ejec'
-#define OPEN 'open'
-#define LOAD 'load'
+#define OPEN_SAMPLE 'osam'
+#define LOAD_SAMPLE 'lsam'
+
+#define OPEN_ENSEMBLE 'open'
+#define SAVE_ENSEMBLE 'save'
+#define SAVEAS_ENSEMBLE 'saas'
 
 static const int kPadCount = 8;
 static const int kDefaultNote = 44;

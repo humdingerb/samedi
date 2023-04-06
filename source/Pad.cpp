@@ -50,7 +50,7 @@ Pad::Pad(int32 number, int32 note)
 	fLoopButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fLoopButton->SetToolTip(B_TRANSLATE("Loop"));
 
-	fSampleButton = new BButton("sample", kNoSample, new BMessage(OPEN));
+	fSampleButton = new BButton("sample", kNoSample, new BMessage(OPEN_SAMPLE));
 	fSampleButton->SetFlat(true);
 	fSampleButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
@@ -130,7 +130,7 @@ Pad::MessageReceived(BMessage* msg)
 			SetSample(fSamplePath);
 			break;
 		}
-		case OPEN:
+		case OPEN_SAMPLE:
 		{
 			msg->AddInt32("pad", fPadNumber);
 			Window()->PostMessage(msg);
