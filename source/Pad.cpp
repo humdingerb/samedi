@@ -29,13 +29,11 @@ Pad::Pad(int32 number, int32 note)
 	fNote(note),
 	fPlayer(NULL)
 {
-	BString text;
-	text << fPadNumber + 1;
-	BStringView* padNr = new BStringView("padNr", text);
-
-	text = "";
-	text << fNote;
-	fNoteControl = new BTextControl("notecontrol", NULL, text, new BMessage(NOTE));
+	BString padNr;
+	padNr << fPadNumber + 1;
+	BString noteNr;
+	noteNr << fNote;
+	fNoteControl = new BTextControl("notecontrol", padNr, noteNr, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
 	fMuteButton = new BButton("M", NULL);
@@ -67,7 +65,7 @@ Pad::Pad(int32 number, int32 note)
 	fPlayButton->SetExplicitSize(size);
 	fEjectButton->SetExplicitSize(size);
 
-	float width = be_plain_font->StringWidth("XXX");
+	float width = be_plain_font->StringWidth("XXXXX");
 	size = BSize(width, height);
 	fNoteControl->SetExplicitSize(size);
 
@@ -77,8 +75,6 @@ Pad::Pad(int32 number, int32 note)
 
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING, kSpacing / 2, B_USE_WINDOW_SPACING, kSpacing / 2)
-		.Add(padNr)
-		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fNoteControl)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fMuteButton)
