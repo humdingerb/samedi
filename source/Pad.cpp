@@ -11,6 +11,7 @@
 #include "Pad.h"
 
 #include <Catalog.h>
+#include <ControlLook.h>
 #include <LayoutBuilder.h>
 
 #include <stdio.h>
@@ -37,7 +38,7 @@ Pad::Pad(int32 number, int32 note)
 	fNoteControl = new BTextControl("notecontrol", NULL, text, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
-	fMuteButton = new BButton("M", new BMessage(MUTE));
+	fMuteButton = new BButton("M", NULL);
 	fMuteButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fMuteButton->SetToolTip(B_TRANSLATE("Mute"));
 
@@ -72,8 +73,10 @@ Pad::Pad(int32 number, int32 note)
 
 	fSampleButton->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
 
+	const float kSpacing = be_control_look->DefaultItemSpacing();
+
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
-		.SetInsets(B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING)
+		.SetInsets(B_USE_WINDOW_SPACING, kSpacing / 2, B_USE_WINDOW_SPACING, kSpacing / 2)
 		.Add(padNr)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fNoteControl)

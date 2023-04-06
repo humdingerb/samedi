@@ -44,7 +44,7 @@ MainWindow::MainWindow()
 	menuBar->AddItem(menu);
 
 	BView* padView = new BView("padView", 0);
-	BLayoutBuilder::Group<>(padView, B_VERTICAL, 2)
+	BLayoutBuilder::Group<>(padView, B_VERTICAL, 0)
 		.Add(fPads[0])
 		.Add(new BSeparatorView(B_HORIZONTAL))
 		.Add(fPads[1])
@@ -62,15 +62,11 @@ MainWindow::MainWindow()
 		.Add(fPads[7]);
 
 	padView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
-	BScrollView* scrollView = new BScrollView("scrollview", padView, B_WILL_DRAW, false, true);
-	scrollView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(menuBar)
-		.AddGroup(B_VERTICAL)
-			.SetInsets(-2, -2, -2, -2)
-			.Add(scrollView)
-			.End();
+		.Add(padView)
+		.End();
 
 	fMessenger = new BMessenger(this, NULL);
 	fConsumer = new MidiConsumer(fMessenger);
