@@ -10,8 +10,6 @@
 #define CONSTANTS_H
 
 
-#define PLAYSAMPLE 'play'
-
 #define NOTE 'note'
 #define MUTE 'mute'
 #define SOLO 'solo'
@@ -22,7 +20,7 @@
 #define LOAD 'load'
 
 static const int kPadCount = 8;
-static const int kDefaultNote = 43;
+static const int kDefaultNote = 44;
 
 
 #endif // CONSTANTS_H

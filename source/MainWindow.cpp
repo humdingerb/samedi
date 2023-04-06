@@ -30,19 +30,11 @@ MainWindow::MainWindow()
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
-	fOpenPanel(new BFilePanel(B_OPEN_PANEL)),
-	fSoloPad(-1)
+	fOpenPanel(new BFilePanel(B_OPEN_PANEL))
 {
-	fPlayerConfig = new playerConfig;
-
-	// init pads, player-config and players
-	const char* path = "/HiQ-Data/audio/soundeffects/notify.wav";
-	for (int32 i = 0; i < kPadCount; i++) {
-		fPads[i] = new Pad(i, fPlayerConfig->note[i]);
-		fPlayerConfig->sample[i] = path;
-		fPlayers[i] = NULL;
-		_SetSample(i);
-	}
+	// init pads
+	for (int32 i = 0; i < kPadCount; i++)
+		fPads[i] = new Pad(i, kDefaultNote + i);
 
 	// building layout
 	BMenuBar* menuBar = new BMenuBar("menubar");
@@ -69,7 +61,9 @@ MainWindow::MainWindow()
 		.Add(new BSeparatorView(B_HORIZONTAL))
 		.Add(fPads[7]);
 
+	padView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
 	BScrollView* scrollView = new BScrollView("scrollview", padView, B_WILL_DRAW, false, true);
+	scrollView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(menuBar)
@@ -105,107 +99,58 @@ MainWindow::MessageReceived(BMessage* msg)
 			_HandleMIDI(msg);
 			break;
 		}
-		case NOTE:
-		{
-			int32 pad = -1;
-			int32 note = -1;
-			msg->FindInt32("pad", &pad);
-			msg->FindInt32("note", &note);
-			fPlayerConfig->note[pad] = note;
-			break;
-		}
-		case MUTE:
-		{
-			int32 pad = -1;
-			int32 on_off = -1;
-			msg->FindInt32("pad", &pad);
-			msg->FindInt32("mute", &on_off);
-			fPlayerConfig->mute[pad] = on_off;
-			break;
-		}
 		case SOLO:
 		{
-			int32 pad = -1;
-			int32 on_off = -1;
-			msg->FindInt32("pad", &pad);
-			msg->FindInt32("solo", &on_off);
+			int32 soloPad;
+			int32 state;
+			if ((msg->FindInt32("pad", &soloPad) == B_OK) and
+				(msg->FindInt32("solo", &state) == B_OK)) {
 
-			if (on_off == B_CONTROL_ON) {
-				// if we already have a solo pad, unset its solo button
-				if (fSoloPad != -1)
-					fPads[fSoloPad]->Solo(B_CONTROL_OFF);
-
-				fSoloPad = pad;
-				for (int32 i = 0; i < kPadCount; i++) {
-					// mute all other pads
-					if (i != pad) {
-						fPlayerConfig->mute[i] = true;
-						fPads[i]->Mute(B_CONTROL_ON);
+				if (state == B_CONTROL_ON) {
+					for (int32 i = 0; i < kPadCount; i++) {
+						// mute all other pads
+						if (i != soloPad)
+							fPads[i]->Mute(B_CONTROL_ON);
+						// unmute the solo pad
+						else
+							fPads[i]->Mute(B_CONTROL_OFF);
 					}
-					// unmute the solo pad
-					else {
-						fPlayerConfig->mute[i] = false;
+				} else {
+					for (int32 i = 0; i < kPadCount; i++)
 						fPads[i]->Mute(B_CONTROL_OFF);
-					}
-				}
-			} else {
-				fPads[fSoloPad]->Solo(B_CONTROL_OFF);
-				fSoloPad = -1;
-				for (int32 i = 0; i < kPadCount; i++) {
-					fPlayerConfig->mute[i] = false;
-					fPads[i]->Mute(B_CONTROL_OFF);
 				}
 			}
-			break;
-		}
-		case LOOP:
-		{
-			int32 pad = -1;
-			int32 on_off = -1;
-			msg->FindInt32("pad", &pad);
-			msg->FindInt32("loop", &on_off);
-			fPlayerConfig->loop[pad] = on_off;
-			_SetSample(pad);
 			break;
 		}
 		case PLAY:
 		{
-			int32 note = -1;
-			msg->FindInt32("note", &note);
-			for (int32 i = 0; i < kPadCount; i++) {
-				if (note == fPlayerConfig->note[i] and fPlayerConfig->mute[i] == false)
-					fPlayers[i]->StartPlaying();
+			int32 note;
+			if (msg->FindInt32("note", &note) == B_OK) {
+				for (int32 i = 0; i < kPadCount; i++)
+					fPads[i]->Play(note);
 			}
-			break;
-		}
-		case EJECT:
-		{
-			int32 pad = -1;
-			msg->FindInt32("pad", &pad);
-			fPlayerConfig->sample[pad] = "";
-			_SetSample(pad);
 			break;
 		}
 		case OPEN:
 		{
-			int32 pad = -1;
-			msg->FindInt32("pad", &pad);
-			BMessage* openMsg = new BMessage(LOAD);
-			openMsg->AddInt32("pad", pad);
-			fOpenPanel->SetTarget(this);
-			fOpenPanel->SetMessage(openMsg);
-			fOpenPanel->Show();
+			int32 pad;
+			if (msg->FindInt32("pad", &pad) == B_OK) {
+				BMessage* openMsg = new BMessage(LOAD);
+				openMsg->AddInt32("pad", pad);
+				fOpenPanel->SetTarget(this);
+				fOpenPanel->SetMessage(openMsg);
+				fOpenPanel->Show();
+			}
 			break;
 		}
 		case LOAD:
 		{
 			entry_ref ref;
-			if (msg->FindRef("refs", &ref) == B_OK) {
-				int32 pad = -1;
-				msg->FindInt32("pad", &pad);
+			int32 pad;
+			if ((msg->FindRef("refs", &ref) == B_OK) and
+				(msg->FindInt32("pad", &pad) == B_OK)) {
 				BPath path(&ref);
-				fPlayerConfig->sample[pad] = path.Path();
-				_SetSample(pad);
+				fPads[pad]->SetSample(path);
 			}
 			break;
 		}
@@ -214,25 +159,6 @@ MainWindow::MessageReceived(BMessage* msg)
 			BWindow::MessageReceived(msg);
 			break;
 		}
-	}
-}
-
-
-void
-MainWindow::_SetSample(int32 pad)
-{
-	if (fPlayers[pad] != NULL)
-		delete fPlayers[pad];
-
-	entry_ref ref;
-	::get_ref_for_path(fPlayerConfig->sample[pad], &ref);
-	bool loop = fPlayerConfig->loop[pad];
-
-	fPlayers[pad] = new BFileGameSound(&ref, loop);
-	if (fPlayers[pad]->InitCheck() == B_OK) {
-		fPlayers[pad]->Preload();
-		BPath path(&ref);
-		fPads[pad]->SetSampleName(path.Leaf());
 	}
 }
 
@@ -254,27 +180,4 @@ MainWindow::_HandleMIDI(BMessage* msg)
 			break;
 		}
 	}
-}
-
-
-void
-MainWindow::_PrintConfig()
-{
-	for (int32 i = 0; i < kPadCount; i++) {
-		printf("Pad: %i\n", i);
-		printf("note:\t");
-		for (int32 j = 0; j < kPadCount; j++)
-			printf("%i, ", fPlayerConfig->note[j]);
-		printf("\nmute:\t");
-		for (int32 j = 0; j < kPadCount; j++)
-			printf("%i, ", fPlayerConfig->mute[j]);
-		printf("\nloop:\t");
-		for (int32 j = 0; j < kPadCount; j++)
-			printf("%i, ", fPlayerConfig->loop[j]);
-		printf("\nsample:\t");
-		for (int32 j = 0; j < kPadCount; j++)
-			printf("%s\n", fPlayerConfig->sample[j]);
-		printf("\n");
-	}
-	printf("\n");
 }

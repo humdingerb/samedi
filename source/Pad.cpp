@@ -25,66 +25,67 @@ Pad::Pad(int32 number, int32 note)
 	:
 	BView("pad", B_WILL_DRAW | B_SUPPORTS_LAYOUT),
 	fPadNumber(number),
-	fNote(note)
+	fNote(note),
+	fPlayer(NULL)
 {
 	BString text;
 	text << fPadNumber + 1;
-	BStringView* pad = new BStringView("pad", text);
+	BStringView* padNr = new BStringView("padNr", text);
 
 	text = "";
 	text << fNote;
 	fNoteControl = new BTextControl("notecontrol", NULL, text, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
-	fMute = new BButton("M", new BMessage(MUTE));
-	fMute->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
-	fMute->SetToolTip(B_TRANSLATE("Mute"));
+	fMuteButton = new BButton("M", new BMessage(MUTE));
+	fMuteButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
+	fMuteButton->SetToolTip(B_TRANSLATE("Mute"));
 
-	fSolo = new BButton("S" , new BMessage(SOLO));
-	fSolo->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
-	fSolo->SetToolTip(B_TRANSLATE("Solo"));
+	fSoloButton = new BButton("S" , new BMessage(SOLO));
+	fSoloButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
+	fSoloButton->SetToolTip(B_TRANSLATE("Solo"));
 
-	fLoop = new BButton("∞" , new BMessage(LOOP));
-	fLoop->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
-	fLoop->SetToolTip(B_TRANSLATE("Loop"));
+	fLoopButton = new BButton("∞" , new BMessage(LOOP));
+	fLoopButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
+	fLoopButton->SetToolTip(B_TRANSLATE("Loop"));
 
-	fSample = new BButton("sample", kNoSample, new BMessage(OPEN));
-	fSample->SetFlat(true);
-	fSample->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
+	fSampleButton = new BButton("sample", kNoSample, new BMessage(OPEN));
+	fSampleButton->SetFlat(true);
+	fSampleButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
-	fPlay = new BButton("⯈" , new BMessage(PLAY));
-	fEject = new BButton("⏏" , new BMessage(EJECT));
+	fPlayButton = new BButton("⯈" , new BMessage(PLAY));
+	fEjectButton = new BButton("⏏" , new BMessage(EJECT));
 
 	// limit widget sizes
 	float height;
 	fNoteControl->GetPreferredSize(NULL, &height);
 	BSize size(height, height);
-	fMute->SetExplicitSize(size);
-	fSolo->SetExplicitSize(size);
-	fLoop->SetExplicitSize(size);
-	fPlay->SetExplicitSize(size);
-	fEject->SetExplicitSize(size);
+	fMuteButton->SetExplicitSize(size);
+	fSoloButton->SetExplicitSize(size);
+	fLoopButton->SetExplicitSize(size);
+	fPlayButton->SetExplicitSize(size);
+	fEjectButton->SetExplicitSize(size);
 
 	float width = be_plain_font->StringWidth("XXX");
 	size = BSize(width, height);
 	fNoteControl->SetExplicitSize(size);
 
-	fSample->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
+	fSampleButton->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
 
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING)
-		.Add(pad)
+		.Add(padNr)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fNoteControl)
 		.AddStrut(B_USE_SMALL_SPACING)
-		.Add(fMute)
-		.Add(fSolo)
-		.Add(fLoop)
+		.Add(fMuteButton)
+		.Add(fSoloButton)
+		.Add(fLoopButton)
 		.AddStrut(B_USE_SMALL_SPACING)
-		.Add(fSample)
+		.Add(fSampleButton)
 		.AddStrut(B_USE_SMALL_SPACING)
-		.Add(fPlay)
-		.Add(fEject)
+		.Add(fPlayButton)
+		.Add(fEjectButton)
 	.End();
 }
 
@@ -93,65 +94,59 @@ void
 Pad::AttachedToWindow()
 {
 	fNoteControl->SetTarget(this);
-	fMute->SetTarget(this);
-	fSolo->SetTarget(this);
-	fLoop->SetTarget(this);
-	fSample->SetTarget(this);
-	fPlay->SetTarget(this);
-	fEject->SetTarget(this);
+	fMuteButton->SetTarget(this);
+	fSoloButton->SetTarget(this);
+	fLoopButton->SetTarget(this);
+	fSampleButton->SetTarget(this);
+	fPlayButton->SetTarget(this);
+	fEjectButton->SetTarget(this);
+
+	BPath sample("/HiQ-Data/audio/soundeffects/notify.wav");
+	SetSample(sample);
 }
 
 
 void
 Pad::MessageReceived(BMessage* msg)
 {
-	msg->AddInt32("pad", fPadNumber);
-
 	switch (msg->what) {
 		case NOTE:
 		{
-			int32 note = atoi(fNoteControl->Text());
-			msg->AddInt32("note", note);
-			Window()->PostMessage(msg);
-			break;
-		}
-		case MUTE:
-		{
-			int32 on_off = fMute->Value();
-			msg->AddInt32("mute", on_off);
-			Window()->PostMessage(msg);
+			fNote = atoi(fNoteControl->Text());
 			break;
 		}
 		case SOLO:
 		{
-			int32 on_off = fSolo->Value();
-			msg->AddInt32("solo", on_off);
+			msg->AddInt32("pad", fPadNumber);
+			msg->AddInt32("solo", fSoloButton->Value());
 			Window()->PostMessage(msg);
 			break;
 		}
 		case LOOP:
 		{
-			int32 on_off = fLoop->Value();
-			msg->AddInt32("loop", on_off);
-			Window()->PostMessage(msg);
+			SetSample(fSamplePath);
 			break;
 		}
 		case OPEN:
 		{
-			msg->AddInt32("note", fNote);
+			msg->AddInt32("pad", fPadNumber);
 			Window()->PostMessage(msg);
 			break;
 		}
 		case PLAY:
 		{
-			msg->AddInt32("note", fNote);
-			Window()->PostMessage(msg);
+			if (fMuteButton->Value() == B_CONTROL_ON)
+				break;
+			if (fPlayer != NULL)
+				fPlayer->StartPlaying();
 			break;
 		}
 		case EJECT:
 		{
-			fSample->SetLabel(kNoSample);
-			Window()->PostMessage(msg);
+			fSampleButton->SetLabel(kNoSample);
+			fSamplePath = BPath("");
+			fPlayer = NULL;
+			delete fPlayer;
 			break;
 		}
 		default:
@@ -169,19 +164,40 @@ Pad::MessageReceived(BMessage* msg)
 void
 Pad::Mute(int32 state)
 {
-	fMute->SetValue(state);
+	fMuteButton->SetValue(state);
+
+	// in case this pad was in solo mode
+	if (state == B_CONTROL_ON)
+		fSoloButton->SetValue(B_CONTROL_OFF);
 }
 
 
 void
-Pad::Solo(int32 state)
+Pad::Play(int32 note)
 {
-	fSolo->SetValue(state);
+	if (fMuteButton->Value() == B_CONTROL_ON)
+		return;
+	if (note != fNote)
+		return;
+
+	if (fPlayer != NULL)
+		fPlayer->StartPlaying();
 }
 
 
 void
-Pad::SetSampleName(const char* sample)
+Pad::SetSample(BPath sample)
 {
-	fSample->SetLabel(sample);
+	if (sample.InitCheck() != B_OK)
+		return;
+
+	fSamplePath = sample;
+	if (fPlayer != NULL)
+		delete fPlayer;
+
+	fPlayer = new BFileGameSound(fSamplePath.Path(), fLoopButton->Value() == B_CONTROL_ON);
+	if (fPlayer->InitCheck() == B_OK)
+		fPlayer->Preload();
+
+	fSampleButton->SetLabel(fSamplePath.Leaf());
 }

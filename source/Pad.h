@@ -11,6 +11,8 @@
 
 
 #include <Button.h>
+#include <FileGameSound.h>
+#include <Path.h>
 #include <StringView.h>
 #include <SupportDefs.h>
 #include <TextControl.h>
@@ -25,22 +27,25 @@ public:
 	virtual	void	AttachedToWindow();
 	void			MessageReceived(BMessage* msg);
 
+	void			Play(int32 note);
 	void			Mute(int32 state);
-	void			Solo(int32 state);
-	void			SetSampleName(const char* sample);
+	void			SetSample(BPath sample);
 
 private:
 	int32			fPadNumber;
 	int32			fNote;
 
-	BButton*		fMute;
-	BButton*		fSolo;
-	BButton*		fLoop;
-	BButton*		fSample;
-	BButton*		fPlay;
-	BButton*		fEject;
+	BButton*		fMuteButton;
+	BButton*		fSoloButton;
+	BButton*		fLoopButton;
+	BButton*		fSampleButton;
+	BButton*		fPlayButton;
+	BButton*		fEjectButton;
 
 	BTextControl*	fNoteControl;
+	BFileGameSound*	fPlayer;
+	BPath			fSamplePath;
+
 };
 
 
