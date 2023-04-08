@@ -20,6 +20,7 @@
 #define B_TRANSLATION_CONTEXT "Pad"
 
 static const char* kNoSample = B_TRANSLATE_MARK("<click to load a sample>");
+static const char* kSampleNotFound = B_TRANSLATE_MARK("☛ Failed loading sample ☚");
 
 
 Pad::Pad(int32 number, int32 note)
@@ -27,6 +28,7 @@ Pad::Pad(int32 number, int32 note)
 	BView("pad", B_WILL_DRAW | B_SUPPORTS_LAYOUT),
 	fPadNumber(number),
 	fNote(note),
+	fSamplePath(""),
 	fPlayer(NULL)
 {
 	BString padNr;
@@ -99,9 +101,6 @@ Pad::AttachedToWindow()
 	fSampleButton->SetTarget(this);
 	fPlayButton->SetTarget(this);
 	fEjectButton->SetTarget(this);
-
-	BPath sample("/HiQ-Data/audio/soundeffects/notify.wav");
-	SetSample(sample);
 }
 
 
@@ -185,6 +184,16 @@ Pad::Play(int32 note)
 
 
 void
+Pad::SetNote(int32 note)
+{
+	fNote = note;
+	BString text;
+	text << note;
+	fNoteControl->SetText(text);
+}
+
+
+void
 Pad::SetSample(BPath sample)
 {
 	if (sample.InitCheck() != B_OK)
@@ -195,8 +204,9 @@ Pad::SetSample(BPath sample)
 		delete fPlayer;
 
 	fPlayer = new BFileGameSound(fSamplePath.Path(), fLoopButton->Value() == B_CONTROL_ON);
-	if (fPlayer->InitCheck() == B_OK)
+	if (fPlayer->InitCheck() == B_OK) {
 		fPlayer->Preload();
-
-	fSampleButton->SetLabel(fSamplePath.Leaf());
+		fSampleButton->SetLabel(fSamplePath.Leaf());
+	} else
+		fSampleButton->SetLabel(kSampleNotFound);
 }

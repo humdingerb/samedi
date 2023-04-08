@@ -29,11 +29,17 @@ public:
 
 	void			Play(int32 note);
 	void			Mute(int32 state);
+
+	void			SetNote(int32 note);
+	int32			GetNote() { return fNote; };
+
 	void			SetSample(BPath sample);
+	BString			GetSamplePath() { return fSamplePath.Path(); };
 
 private:
 	int32			fPadNumber;
 	int32			fNote;
+	BPath			fSamplePath;
 
 	BButton*		fMuteButton;
 	BButton*		fSoloButton;
@@ -44,8 +50,6 @@ private:
 
 	BTextControl*	fNoteControl;
 	BFileGameSound*	fPlayer;
-	BPath			fSamplePath;
-
 };
 
 

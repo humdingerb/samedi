@@ -11,6 +11,7 @@
 
 #include <Box.h>
 #include <Catalog.h>
+#include <File.h>
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
@@ -45,12 +46,12 @@ MainWindow::MainWindow()
 		new BMessage(OPEN_ENSEMBLE), 'O');
 	menu->AddItem(menuItem);
 
-	BMenuItem* fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
+	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
 	fSaveMenu->SetEnabled(false);
 	menu->AddItem(fSaveMenu);
 
 	menuItem = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
-		new BMessage(SAVEAS_ENSEMBLE), 'S', B_SHIFT_KEY);
+		new BMessage(SAVE_AS_ENSEMBLE), 'S', B_SHIFT_KEY);
 	menu->AddItem(menuItem);
 
 	menu->AddSeparatorItem();
@@ -114,6 +115,9 @@ MainWindow::MessageReceived(BMessage* msg)
 		case B_SIMPLE_DATA:
 		case B_REFS_RECEIVED:
 		{
+			entry_ref ref;
+			if (msg->FindRef("refs", &ref) == B_OK)
+				_LoadEnsemble(ref);
 			break;
 		}
 		case B_MIDI_EVENT:
@@ -129,8 +133,29 @@ MainWindow::MessageReceived(BMessage* msg)
 			fOpenPanel->Show();
 			break;
 		}
-		case SAVEAS_ENSEMBLE:
+		case SAVE_ENSEMBLE:
 		{
+			_SaveEnsemble();
+			break;
+		}
+		case SAVE_AS_ENSEMBLE:
+		{
+			BMessenger messenger(this);
+			fSavePanel->SetTarget(this);
+			fSavePanel->Show();
+			break;
+		}
+		case B_SAVE_REQUESTED:
+		{
+			entry_ref ref;
+			const char* name;
+			if (msg->FindRef("directory", &ref) == B_OK
+				&& msg->FindString("name", &name) == B_OK) {
+				BDirectory directory(&ref);
+				BEntry entry(&directory, name);
+				fEnsemblePath = BPath(&entry);
+				_SaveEnsemble();
+			}
 			break;
 		}
 		case SOLO:
@@ -184,7 +209,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			if ((msg->FindRef("refs", &ref) == B_OK) and
 				(msg->FindInt32("pad", &pad) == B_OK)) {
 				BPath path(&ref);
-				fPads[pad]->SetSample(path);
+				_SetSample(pad, path.Path());
 			}
 			break;
 		}
@@ -214,4 +239,59 @@ MainWindow::_HandleMIDI(BMessage* msg)
 			break;
 		}
 	}
+}
+
+
+void
+MainWindow::_LoadEnsemble(entry_ref ref)
+{
+	BFile file(&ref, B_READ_ONLY);
+	BMessage ensemble;
+
+	if (file.InitCheck() == B_OK && ensemble.Unflatten(&file) == B_OK) {
+		int32 note = kDefaultNote;
+		BString samplepath = "";
+		for (int32 i = 0; i < kPadCount; i++) {
+			ensemble.FindInt32("note", i, &note);
+			_SetNote(i, note++);
+			ensemble.FindString("sample", i, &samplepath);
+			_SetSample(i, samplepath);
+		}
+	fSaveMenu->SetEnabled(true);
+	fEnsemblePath = BPath(&ref);
+	}
+}
+
+
+void
+MainWindow::_SaveEnsemble()
+{
+	BMessage ensemble;
+
+	for (int32 i = 0; i < kPadCount; i++) {
+		ensemble.AddInt32("note", fPads[i]->GetNote());
+		ensemble.AddString("sample", fPads[i]->GetSamplePath());
+	}
+
+	BFile file(fEnsemblePath.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
+	if (file.InitCheck() == B_OK) {
+		ensemble.Flatten(&file);
+		fSaveMenu->SetEnabled(true);
+	}
+}
+
+
+void
+MainWindow::_SetSample(int32 pad, BString samplepath)
+{
+	BPath path(samplepath.String());
+	if (path.InitCheck() == B_OK)
+		fPads[pad]->SetSample(path);
+}
+
+
+void
+MainWindow::_SetNote(int32 pad, int32 note)
+{
+	fPads[pad]->SetNote(note);
 }

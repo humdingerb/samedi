@@ -29,11 +29,19 @@ public:
 
 private:
 	void			_HandleMIDI(BMessage* msg);
+	void			_LoadEnsemble(entry_ref ref);
+	void			_SaveEnsemble();
+
+	void			_SetSample(int32 pad, BString samplepath);
+	void			_SetNote(int32 pad, int32 note);
 
 	Pad*			fPads[kPadCount];
 
 	BFilePanel*		fOpenPanel;
 	BFilePanel*		fSavePanel;
+
+	BPath			fEnsemblePath;
+
 	BMenuItem*		fSaveMenu;
 
 	BMessenger*		fMessenger;

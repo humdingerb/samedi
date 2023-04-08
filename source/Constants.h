@@ -21,7 +21,7 @@
 
 #define OPEN_ENSEMBLE 'open'
 #define SAVE_ENSEMBLE 'save'
-#define SAVEAS_ENSEMBLE 'saas'
+#define SAVE_AS_ENSEMBLE 'saas'
 
 static const int kPadCount = 8;
 static const int kDefaultNote = 44;
