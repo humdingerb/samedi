@@ -29,6 +29,10 @@ public:
 
 private:
 	void			_HandleMIDI(BMessage* msg);
+
+	void			_LoadSettings();
+	void			_SaveSettings();
+
 	void			_LoadEnsemble(entry_ref ref);
 	void			_SaveEnsemble();
 
@@ -44,6 +48,7 @@ private:
 
 	BMenuItem*		fSaveMenu;
 
+	BMessage*		fSettings;
 	BMessenger*		fMessenger;
 	BMidiRoster*	fRoster;
 	MidiConsumer*	fConsumer;

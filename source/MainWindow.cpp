@@ -12,10 +12,12 @@
 #include <Box.h>
 #include <Catalog.h>
 #include <File.h>
+#include <FindDirectory.h>
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
 #include <Path.h>
+#include <Screen.h>
 #include <ScrollView.h>
 #include <SeparatorView.h>
 
@@ -32,8 +34,20 @@ MainWindow::MainWindow()
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
 	fOpenPanel(new BFilePanel(B_OPEN_PANEL)),
-	fSavePanel(new BFilePanel(B_SAVE_PANEL))
+	fSavePanel(new BFilePanel(B_SAVE_PANEL)),
+	fSettings(NULL)
 {
+	_LoadSettings();
+
+	BRect frame;
+	if (fSettings->FindRect("main window frame", &frame) == B_OK) {
+		BScreen screen(this);
+		if (frame.Intersects(screen.Frame())) {
+			MoveTo(frame.LeftTop());
+			ResizeTo(frame.Width(), frame.Height());
+		}
+	}
+
 	// init pads
 	for (int32 i = 0; i < kPadCount; i++)
 		fPads[i] = new Pad(i, kDefaultNote + i);
@@ -102,6 +116,8 @@ MainWindow::~MainWindow()
 	delete fSavePanel;
 	delete fMessenger;
 	fConsumer->Release();
+
+	_SaveSettings();
 }
 
 
@@ -239,6 +255,40 @@ MainWindow::_HandleMIDI(BMessage* msg)
 			break;
 		}
 	}
+}
+
+
+void
+MainWindow::_LoadSettings()
+{
+	fSettings = new BMessage();
+
+	BPath path;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &path) != B_OK)
+		return;
+
+	path.Append("Samedi_settings");
+	BFile file(path.Path(), B_READ_ONLY);
+
+	if ((file.InitCheck() == B_OK) and (fSettings->Unflatten(&file) != B_OK))
+		fSettings->AddRect("main window frame", BRect(200, 200, 600, 300));
+}
+
+
+void
+MainWindow::_SaveSettings()
+{
+	BPath path;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &path) < B_OK)
+		return;
+
+	BMessage settings;
+	settings.AddRect("main window frame", Frame());
+
+	path.Append("Samedi_settings");
+	BFile file(path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
+	if (file.InitCheck() == B_OK)
+		settings.Flatten(&file);
 }
 
 
