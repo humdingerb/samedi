@@ -42,8 +42,9 @@ private:
 
 	Pad*			fPads[kPadCount];
 
-	BFilePanel*		fOpenPanel;
-	BFilePanel*		fSavePanel;
+	BFilePanel*		fOpenSamplePanel;
+	BFilePanel*		fOpenEnsemblePanel;
+	BFilePanel*		fSaveEnsemblePanel;
 
 	BPath			fEnsemblePath;
 

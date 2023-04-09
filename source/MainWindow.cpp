@@ -16,11 +16,13 @@
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
+#include <NodeInfo.h>
 #include <Path.h>
 #include <Screen.h>
 #include <ScrollView.h>
 #include <SeparatorView.h>
 
+#include <compat/sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,13 +30,42 @@
 #define B_TRANSLATION_CONTEXT "MainWindow"
 
 
+class AudioFilter : public BRefFilter {
+public:
+	bool	Filter(const entry_ref* entryRef, BNode* node,
+				struct stat_beos* stat, const char* fileType);
+};
+
+
+bool
+AudioFilter::Filter(const entry_ref* ref, BNode* node, struct stat_beos* stat,
+	const char* fileType)
+{
+	if (S_ISDIR(stat->st_mode))
+		return true;
+
+	if (S_ISLNK(stat->st_mode)) {
+		BEntry entry(ref, true);
+		return entry.IsDirectory();
+	}
+
+	char mimeType[B_MIME_TYPE_LENGTH];
+	BNodeInfo(node).GetType(mimeType);
+	if (strncmp("audio/", mimeType, 6) == 0)
+		return true;
+
+	return false;
+}
+
+
 MainWindow::MainWindow()
 	:
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
-	fOpenPanel(new BFilePanel(B_OPEN_PANEL)),
-	fSavePanel(new BFilePanel(B_SAVE_PANEL)),
+	fOpenSamplePanel(new BFilePanel(B_OPEN_PANEL)),
+	fOpenEnsemblePanel(new BFilePanel(B_OPEN_PANEL)),
+	fSaveEnsemblePanel(new BFilePanel(B_SAVE_PANEL)),
 	fSettings(NULL)
 {
 	_LoadSettings();
@@ -112,8 +143,9 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-	delete fOpenPanel;
-	delete fSavePanel;
+	delete fOpenSamplePanel;
+	delete fOpenEnsemblePanel;
+	delete fSaveEnsemblePanel;
 	delete fMessenger;
 	fConsumer->Release();
 
@@ -144,9 +176,10 @@ MainWindow::MessageReceived(BMessage* msg)
 		case OPEN_ENSEMBLE:
 		{
 			BMessage* openMsg = new BMessage(B_REFS_RECEIVED);
-			fOpenPanel->SetTarget(this);
-			fOpenPanel->SetMessage(openMsg);
-			fOpenPanel->Show();
+			fOpenEnsemblePanel->SetTarget(this);
+			fOpenEnsemblePanel->SetMessage(openMsg);
+			fOpenEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open ensemble"));
+			fOpenEnsemblePanel->Show();
 			break;
 		}
 		case SAVE_ENSEMBLE:
@@ -157,8 +190,9 @@ MainWindow::MessageReceived(BMessage* msg)
 		case SAVE_AS_ENSEMBLE:
 		{
 			BMessenger messenger(this);
-			fSavePanel->SetTarget(this);
-			fSavePanel->Show();
+			fSaveEnsemblePanel->SetTarget(this);
+			fSaveEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Save ensemble"));
+			fSaveEnsemblePanel->Show();
 			break;
 		}
 		case B_SAVE_REQUESTED:
@@ -212,9 +246,11 @@ MainWindow::MessageReceived(BMessage* msg)
 			if (msg->FindInt32("pad", &pad) == B_OK) {
 				BMessage* openMsg = new BMessage(LOAD_SAMPLE);
 				openMsg->AddInt32("pad", pad);
-				fOpenPanel->SetTarget(this);
-				fOpenPanel->SetMessage(openMsg);
-				fOpenPanel->Show();
+				fOpenSamplePanel->SetTarget(this);
+				fOpenSamplePanel->SetMessage(openMsg);
+				fOpenSamplePanel->SetRefFilter(new AudioFilter());
+				fOpenSamplePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open sample"));
+				fOpenSamplePanel->Show();
 			}
 			break;
 		}
