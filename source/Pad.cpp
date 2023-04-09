@@ -20,7 +20,7 @@
 #define B_TRANSLATION_CONTEXT "Pad"
 
 static const char* kNoSample = B_TRANSLATE_MARK("<click to load a sample>");
-static const char* kSampleNotFound = B_TRANSLATE_MARK("☛ Failed loading sample ☚");
+static const char* kSampleNotFound = B_TRANSLATE_MARK("⚠ - Failed loading '%samplefile%'");
 
 
 Pad::Pad(int32 number, int32 note)
@@ -207,6 +207,9 @@ Pad::SetSample(BPath sample)
 	if (fPlayer->InitCheck() == B_OK) {
 		fPlayer->Preload();
 		fSampleButton->SetLabel(fSamplePath.Leaf());
-	} else
-		fSampleButton->SetLabel(kSampleNotFound);
+	} else {
+		BString label(kSampleNotFound);
+		label.ReplaceFirst("%samplefile%", fSamplePath.Leaf());
+		fSampleButton->SetLabel(label);
+	}
 }
