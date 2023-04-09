@@ -14,9 +14,11 @@
 #include "Pad.h"
 
 #include <FilePanel.h>
+#include <Menu.h>
 #include <Messenger.h>
 #include <MidiProducer.h>
 #include <MidiRoster.h>
+#include <StringList.h>
 #include <Window.h>
 
 
@@ -25,6 +27,7 @@ public:
 					MainWindow();
 	virtual			~MainWindow();
 
+	void			MenusBeginning();
 	void			MessageReceived(BMessage* msg);
 
 private:
@@ -35,6 +38,8 @@ private:
 
 	void			_LoadEnsemble(entry_ref ref);
 	void			_SaveEnsemble();
+	void			_AddRecentEnsemble(BString path);
+
 	void			_UpdateWindowTitle();
 
 	void			_SetSample(int32 pad, BString samplepath);
@@ -47,7 +52,10 @@ private:
 	BFilePanel*		fSaveEnsemblePanel;
 
 	BPath			fEnsemblePath;
+	BStringList		fRecentEnsemblePaths;
 
+	BMenu*			fOpenRecentSubmenu;
+	BMenuItem*		fOpenRecentMenu;
 	BMenuItem*		fSaveMenu;
 
 	BMessage*		fSettings;

@@ -141,10 +141,7 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case EJECT:
 		{
-			fSampleButton->SetLabel(kNoSample);
-			fSamplePath = BPath("");
-			fPlayer = NULL;
-			delete fPlayer;
+			_Eject();
 			break;
 		}
 		default:
@@ -196,8 +193,10 @@ Pad::SetNote(int32 note)
 void
 Pad::SetSample(BPath sample)
 {
-	if (sample.InitCheck() != B_OK)
+	if (sample.InitCheck() != B_OK) {
+		_Eject();
 		return;
+	}
 
 	fSamplePath = sample;
 	if (fPlayer != NULL)
@@ -212,4 +211,14 @@ Pad::SetSample(BPath sample)
 		label.ReplaceFirst("%samplefile%", fSamplePath.Leaf());
 		fSampleButton->SetLabel(label);
 	}
+}
+
+
+void
+Pad::_Eject()
+{
+	fSampleButton->SetLabel(kNoSample);
+	fSamplePath = BPath("");
+	fPlayer = NULL;
+	delete fPlayer;
 }

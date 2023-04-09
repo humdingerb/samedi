@@ -20,10 +20,12 @@
 #define LOAD_SAMPLE 'lsam'
 
 #define OPEN_ENSEMBLE 'open'
+#define OPEN_RECENT 'opre'
 #define SAVE_ENSEMBLE 'save'
 #define SAVE_AS_ENSEMBLE 'saas'
 
 static const int kPadCount = 8;
+static const int kMaxRecentEnsembles = 10;
 static const int kDefaultNote = 44;
 
 

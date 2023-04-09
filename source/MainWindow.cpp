@@ -66,6 +66,7 @@ MainWindow::MainWindow()
 	fOpenSamplePanel(new BFilePanel(B_OPEN_PANEL)),
 	fOpenEnsemblePanel(new BFilePanel(B_OPEN_PANEL)),
 	fSaveEnsemblePanel(new BFilePanel(B_SAVE_PANEL)),
+	fRecentEnsemblePaths(10),
 	fSettings(NULL)
 {
 	_LoadSettings();
@@ -90,6 +91,10 @@ MainWindow::MainWindow()
 	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
 		new BMessage(OPEN_ENSEMBLE), 'O');
 	menu->AddItem(menuItem);
+
+	fOpenRecentSubmenu = new BMenu(B_TRANSLATE("Open recent"));
+	fOpenRecentMenu = new BMenuItem(fOpenRecentSubmenu);
+	menu->AddItem(fOpenRecentMenu);
 
 	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
 	fSaveMenu->SetEnabled(false);
@@ -157,6 +162,29 @@ MainWindow::~MainWindow()
 
 
 void
+MainWindow::MenusBeginning()
+{
+	fOpenRecentSubmenu->RemoveItems(0, fOpenRecentSubmenu->CountItems(), true);
+
+	int32 menu = 0;
+	BString filepath;
+	for (int32 i = fRecentEnsemblePaths.CountStrings() - 1; i >= 0; i--) {
+		filepath = fRecentEnsemblePaths.StringAt(i);
+		BMessage* msg = new BMessage(OPEN_RECENT);
+		msg->AddInt32("menu", menu++);
+		msg->AddString("filepath", filepath);
+		BPath path(filepath.String());
+		BMenuItem* item = new BMenuItem(path.Leaf(), msg);
+		fOpenRecentSubmenu->AddItem(item);
+
+		BEntry entry(filepath.String());
+		if (entry.Exists() == false)
+			item->SetEnabled(false);
+	}
+}
+
+
+void
 MainWindow::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
@@ -180,6 +208,18 @@ MainWindow::MessageReceived(BMessage* msg)
 			fOpenEnsemblePanel->SetMessage(openMsg);
 			fOpenEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open ensemble"));
 			fOpenEnsemblePanel->Show();
+			break;
+		}
+		case OPEN_RECENT:
+		{
+			int32 menu;
+			BString filepath;
+			if ((msg->FindInt32("menu", &menu) == B_OK) and
+				(msg->FindString("filepath", &filepath) == B_OK)){
+				entry_ref ref;
+				get_ref_for_path(filepath.String(), &ref);
+				_LoadEnsemble(ref);
+			}
 			break;
 		}
 		case SAVE_ENSEMBLE:
@@ -308,6 +348,8 @@ MainWindow::_LoadSettings()
 
 	if ((file.InitCheck() == B_OK) and (fSettings->Unflatten(&file) != B_OK))
 		fSettings->AddRect("main window frame", BRect(200, 200, 600, 300));
+	else
+		fSettings->FindStrings("recent ensemble", &fRecentEnsemblePaths);
 }
 
 
@@ -320,6 +362,9 @@ MainWindow::_SaveSettings()
 
 	BMessage settings;
 	settings.AddRect("main window frame", Frame());
+
+	for (int32 i = 0; i < fRecentEnsemblePaths.CountStrings(); i++)
+		settings.AddString("recent ensemble", fRecentEnsemblePaths.StringAt(i));
 
 	path.Append("Samedi_settings");
 	BFile file(path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
@@ -339,13 +384,15 @@ MainWindow::_LoadEnsemble(entry_ref ref)
 		BString samplepath = "";
 		for (int32 i = 0; i < kPadCount; i++) {
 			ensemble.FindInt32("note", i, &note);
-			_SetNote(i, note++);
 			ensemble.FindString("sample", i, &samplepath);
+			_SetNote(i, note++);
 			_SetSample(i, samplepath);
 		}
-	fSaveMenu->SetEnabled(true);
-	fEnsemblePath = BPath(&ref);
-	_UpdateWindowTitle();
+		fSaveMenu->SetEnabled(true);
+		BPath path(&ref);
+		fEnsemblePath = path;
+		_AddRecentEnsemble(path.Path());
+		_UpdateWindowTitle();
 	}
 }
 
@@ -364,8 +411,26 @@ MainWindow::_SaveEnsemble()
 	if (file.InitCheck() == B_OK) {
 		ensemble.Flatten(&file);
 		fSaveMenu->SetEnabled(true);
+		_AddRecentEnsemble(fEnsemblePath.Path());
 		_UpdateWindowTitle();
 	}
+}
+
+
+void
+MainWindow::_AddRecentEnsemble(BString path)
+{
+	int32 count = fRecentEnsemblePaths.CountStrings();
+	// remove oldest item, if we exceed max number
+	if (count == kMaxRecentEnsembles)
+		fRecentEnsemblePaths.Remove(0);
+
+	int32 index = fRecentEnsemblePaths.IndexOf(path);
+	// add new item to the end, or move existing item to the end
+	if (index < 0)
+		fRecentEnsemblePaths.Add(path);
+	else
+		fRecentEnsemblePaths.Move(index, count - 1);
 }
 
 
@@ -384,8 +449,7 @@ void
 MainWindow::_SetSample(int32 pad, BString samplepath)
 {
 	BPath path(samplepath.String());
-	if (path.InitCheck() == B_OK)
-		fPads[pad]->SetSample(path);
+	fPads[pad]->SetSample(path);
 }
 
 

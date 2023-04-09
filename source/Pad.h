@@ -37,6 +37,8 @@ public:
 	BString			GetSamplePath() { return fSamplePath.Path(); };
 
 private:
+	void			_Eject();
+
 	int32			fPadNumber;
 	int32			fNote;
 	BPath			fSamplePath;
