@@ -35,6 +35,7 @@ private:
 
 	void			_LoadEnsemble(entry_ref ref);
 	void			_SaveEnsemble();
+	void			_UpdateWindowTitle();
 
 	void			_SetSample(int32 pad, BString samplepath);
 	void			_SetNote(int32 pad, int32 note);

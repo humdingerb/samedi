@@ -309,6 +309,7 @@ MainWindow::_LoadEnsemble(entry_ref ref)
 		}
 	fSaveMenu->SetEnabled(true);
 	fEnsemblePath = BPath(&ref);
+	_UpdateWindowTitle();
 	}
 }
 
@@ -327,7 +328,19 @@ MainWindow::_SaveEnsemble()
 	if (file.InitCheck() == B_OK) {
 		ensemble.Flatten(&file);
 		fSaveMenu->SetEnabled(true);
+		_UpdateWindowTitle();
 	}
+}
+
+
+void
+MainWindow::_UpdateWindowTitle()
+{
+	BString title(B_TRANSLATE_SYSTEM_NAME("Samedi"));
+	if (fEnsemblePath != NULL)
+		title << " : " << fEnsemblePath.Leaf();
+
+	SetTitle(title);
 }
 
 
