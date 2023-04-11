@@ -204,6 +204,7 @@ Pad::Play(int32 note)
 
 	if (fDetectButton->Value() == B_CONTROL_ON) {
 		SetNote(note);
+		_SetDetectMode(false);
 		return;
 	}
 
@@ -262,7 +263,7 @@ Pad::_Eject()
 void
 Pad::_SetDetectMode(bool state)
 {
-	if (state) {
+	if (state == true) {
 		fDetectButton->SetValue(B_CONTROL_ON);
 		fNoteControl->SetToolTip(B_TRANSLATE("Press key"));
 		fNoteControl->MarkAsInvalid(true);
