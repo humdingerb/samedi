@@ -42,6 +42,7 @@ private:
 
 	void			_UpdateWindowTitle();
 
+	void			_SendSample(BMessage* msg, entry_ref ref);
 	void			_SetSample(int32 pad, BString samplepath);
 	void			_SetNote(int32 pad, int32 note);
 

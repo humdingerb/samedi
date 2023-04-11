@@ -16,6 +16,7 @@
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuItem.h>
+#include <Node.h>
 #include <NodeInfo.h>
 #include <Path.h>
 #include <Screen.h>
@@ -192,7 +193,16 @@ MainWindow::MessageReceived(BMessage* msg)
 		case B_REFS_RECEIVED:
 		{
 			entry_ref ref;
-			if (msg->FindRef("refs", &ref) == B_OK)
+			if (msg->FindRef("refs", &ref) != B_OK)
+				break;
+
+			BEntry entry(&ref);
+			BNode node(&entry);
+			char mimeType[B_MIME_TYPE_LENGTH];
+			BNodeInfo(&node).GetType(mimeType);
+			if (strncmp("audio/", mimeType, 6) == 0)
+				_SendSample(msg, ref);
+			else
 				_LoadEnsemble(ref);
 			break;
 		}
@@ -442,6 +452,24 @@ MainWindow::_UpdateWindowTitle()
 		title << " : " << fEnsemblePath.Leaf();
 
 	SetTitle(title);
+}
+
+
+void
+MainWindow::_SendSample(BMessage* msg, entry_ref ref)
+{
+	BPath path(&ref);
+
+	BPoint point;
+	msg->FindPoint("_drop_point_", &point);
+
+	for (int32 i = 0; i < kPadCount; i++) {
+		BRect rect = fPads[i]->ConvertToScreen(fPads[i]->Bounds());
+		if (rect.Contains(point)) {
+			fPads[i]->SetSample(path.Path());
+			return;
+		}
+	}
 }
 
 
