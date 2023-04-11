@@ -38,6 +38,10 @@ Pad::Pad(int32 number, int32 note)
 	fNoteControl = new BTextControl("notecontrol", padNr, noteNr, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
+	fDetectButton = new BButton("" , new BMessage(DETECT_NOTE));
+	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
+	fDetectButton->SetToolTip(B_TRANSLATE("Detect Midi note"));
+
 	fMuteButton = new BButton("M", NULL);
 	fMuteButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fMuteButton->SetToolTip(B_TRANSLATE("Mute"));
@@ -67,7 +71,11 @@ Pad::Pad(int32 number, int32 note)
 	fPlayButton->SetExplicitSize(size);
 	fEjectButton->SetExplicitSize(size);
 
-	float width = be_plain_font->StringWidth("XXXXX");
+	float width = height * 0.7;
+	size = BSize(width, height);
+	fDetectButton->SetExplicitSize(size);
+
+	width = be_plain_font->StringWidth("XXXXX");
 	size = BSize(width, height);
 	fNoteControl->SetExplicitSize(size);
 
@@ -78,6 +86,7 @@ Pad::Pad(int32 number, int32 note)
 	BLayoutBuilder::Group<>(this, B_HORIZONTAL, 0)
 		.SetInsets(B_USE_WINDOW_SPACING, kSpacing / 2, B_USE_WINDOW_SPACING, kSpacing / 2)
 		.Add(fNoteControl)
+		.Add(fDetectButton)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fMuteButton)
 		.Add(fSoloButton)
@@ -95,6 +104,7 @@ void
 Pad::AttachedToWindow()
 {
 	fNoteControl->SetTarget(this);
+	fDetectButton->SetTarget(this);
 	fMuteButton->SetTarget(this);
 	fSoloButton->SetTarget(this);
 	fLoopButton->SetTarget(this);
@@ -111,6 +121,22 @@ Pad::MessageReceived(BMessage* msg)
 		case NOTE:
 		{
 			fNote = atoi(fNoteControl->Text());
+			fDetectButton->SetValue(B_CONTROL_OFF);
+			fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+			break;
+		}
+		case DETECT_NOTE:
+		{
+			BString note;
+			if (fDetectButton->Value() == B_CONTROL_ON) {
+				fNoteControl->SetToolTip(B_TRANSLATE("Press key"));
+				note << "?";
+			} else {
+				note << fNote;
+				fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+			}
+
+			fNoteControl->SetText(note);
 			break;
 		}
 		case SOLO:
@@ -172,6 +198,14 @@ Pad::Play(int32 note)
 {
 	if (fMuteButton->Value() == B_CONTROL_ON)
 		return;
+
+	if (fDetectButton->Value() == B_CONTROL_ON) {
+		fDetectButton->SetValue(B_CONTROL_OFF);
+		fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+		SetNote(note);
+		return;
+	}
+
 	if (note != fNote)
 		return;
 

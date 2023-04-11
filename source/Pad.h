@@ -43,6 +43,7 @@ private:
 	int32			fNote;
 	BPath			fSamplePath;
 
+	BButton*		fDetectButton;
 	BButton*		fMuteButton;
 	BButton*		fSoloButton;
 	BButton*		fLoopButton;

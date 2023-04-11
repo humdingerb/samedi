@@ -19,6 +19,9 @@
 #define OPEN_SAMPLE 'osam'
 #define LOAD_SAMPLE 'lsam'
 
+#define DETECT_NOTE 'dtct'
+#define NEW_NOTE 'newn'
+
 #define OPEN_ENSEMBLE 'open'
 #define OPEN_RECENT 'opre'
 #define SAVE_ENSEMBLE 'save'
