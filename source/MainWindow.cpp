@@ -93,9 +93,9 @@ MainWindow::MainWindow()
 		new BMessage(OPEN_ENSEMBLE), 'O');
 	menu->AddItem(menuItem);
 
-	fOpenRecentSubmenu = new BMenu(B_TRANSLATE("Open recent"));
-	fOpenRecentMenu = new BMenuItem(fOpenRecentSubmenu);
-	menu->AddItem(fOpenRecentMenu);
+	fOpenRecentMenu = new BMenu(B_TRANSLATE("Open recent"));
+	menuItem = new BMenuItem(fOpenRecentMenu);
+	menu->AddItem(menuItem);
 
 	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
 	fSaveMenu->SetEnabled(false);
@@ -113,6 +113,9 @@ MainWindow::MainWindow()
 	menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
 	menu->AddItem(menuItem);
 	menuBar->AddItem(menu);
+
+	fMidiInMenu = new BMenu(B_TRANSLATE("Midi in"));
+	menuBar->AddItem(fMidiInMenu);
 
 	// building layout
 	BView* padView = new BView("padView", 0);
@@ -165,23 +168,11 @@ MainWindow::~MainWindow()
 void
 MainWindow::MenusBeginning()
 {
-	fOpenRecentSubmenu->RemoveItems(0, fOpenRecentSubmenu->CountItems(), true);
+	fMidiInMenu->RemoveItems(0, fMidiInMenu->CountItems(), true);
+	_PopulateMidiInMenu();
 
-	int32 menu = 0;
-	BString filepath;
-	for (int32 i = fRecentEnsemblePaths.CountStrings() - 1; i >= 0; i--) {
-		filepath = fRecentEnsemblePaths.StringAt(i);
-		BMessage* msg = new BMessage(OPEN_RECENT);
-		msg->AddInt32("menu", menu++);
-		msg->AddString("filepath", filepath);
-		BPath path(filepath.String());
-		BMenuItem* item = new BMenuItem(path.Leaf(), msg);
-		fOpenRecentSubmenu->AddItem(item);
-
-		BEntry entry(filepath.String());
-		if (entry.Exists() == false)
-			item->SetEnabled(false);
-	}
+	fOpenRecentMenu->RemoveItems(0, fOpenRecentMenu->CountItems(), true);
+	_PopulateOpenRecentMenu();
 }
 
 
@@ -209,6 +200,18 @@ MainWindow::MessageReceived(BMessage* msg)
 		case B_MIDI_EVENT:
 		{
 			_HandleMIDI(msg);
+			break;
+		}
+		case MIDI_IN_MENU:
+		{
+			int32 id = msg->FindInt32("port_id");
+			BMidiProducer* producer = fRoster->FindProducer(id);
+			if (producer) {
+				if (producer->IsConnected(fConsumer))
+					producer->Disconnect(fConsumer);
+				else
+					producer->Connect(fConsumer);
+			}
 			break;
 		}
 		case OPEN_ENSEMBLE:
@@ -320,6 +323,46 @@ MainWindow::MessageReceived(BMessage* msg)
 			BWindow::MessageReceived(msg);
 			break;
 		}
+	}
+}
+
+
+void
+MainWindow::_PopulateMidiInMenu()
+{
+	int32 id = 0;
+	BMidiProducer* producer = NULL;
+
+	while ((producer = fRoster->NextProducer(&id)) != NULL) {
+		if (producer->IsValid()) {
+			BMessage* msg = new BMessage(MIDI_IN_MENU);
+			msg->AddInt32("port_id", id);
+			BMenuItem* item = new BMenuItem(producer->Name(), msg);
+			fMidiInMenu->AddItem(item);
+			if (producer->IsConnected(fConsumer))
+				item->SetMarked(true);
+		}
+	}
+}
+
+
+void
+MainWindow::_PopulateOpenRecentMenu()
+{
+	int32 menu = 0;
+	BString filepath;
+	for (int32 i = fRecentEnsemblePaths.CountStrings() - 1; i >= 0; i--) {
+		filepath = fRecentEnsemblePaths.StringAt(i);
+		BMessage* msg = new BMessage(OPEN_RECENT);
+		msg->AddInt32("menu", menu++);
+		msg->AddString("filepath", filepath);
+		BPath path(filepath.String());
+		BMenuItem* item = new BMenuItem(path.Leaf(), msg);
+		fOpenRecentMenu->AddItem(item);
+
+		BEntry entry(filepath.String());
+		if (entry.Exists() == false)
+			item->SetEnabled(false);
 	}
 }
 

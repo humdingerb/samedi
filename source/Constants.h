@@ -26,6 +26,7 @@
 #define OPEN_RECENT 'opre'
 #define SAVE_ENSEMBLE 'save'
 #define SAVE_AS_ENSEMBLE 'saas'
+#define MIDI_IN_MENU 'miin'
 
 static const int kPadCount = 8;
 static const int kMaxRecentEnsembles = 10;

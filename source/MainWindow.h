@@ -31,6 +31,8 @@ public:
 	void			MessageReceived(BMessage* msg);
 
 private:
+	void			_PopulateOpenRecentMenu();
+	void			_PopulateMidiInMenu();
 	void			_HandleMIDI(BMessage* msg);
 
 	void			_LoadSettings();
@@ -55,8 +57,8 @@ private:
 	BPath			fEnsemblePath;
 	BStringList		fRecentEnsemblePaths;
 
-	BMenu*			fOpenRecentSubmenu;
-	BMenuItem*		fOpenRecentMenu;
+	BMenu*			fOpenRecentMenu;
+	BMenu*			fMidiInMenu;
 	BMenuItem*		fSaveMenu;
 
 	BMessage*		fSettings;
