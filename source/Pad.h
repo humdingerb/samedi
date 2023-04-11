@@ -25,6 +25,7 @@ public:
 	virtual			~Pad() {};
 
 	virtual	void	AttachedToWindow();
+	void			KeyDown(const char* bytes, int32 numBytes);
 	void			MessageReceived(BMessage* msg);
 
 	void			Play(int32 note);

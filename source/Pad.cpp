@@ -97,6 +97,8 @@ Pad::Pad(int32 number, int32 note)
 		.Add(fPlayButton)
 		.Add(fEjectButton)
 	.End();
+
+	SetEventMask(B_KEYBOARD_EVENTS);
 }
 
 
@@ -111,6 +113,17 @@ Pad::AttachedToWindow()
 	fSampleButton->SetTarget(this);
 	fPlayButton->SetTarget(this);
 	fEjectButton->SetTarget(this);
+}
+
+
+void
+Pad::KeyDown(const char* bytes, int32 numBytes)
+{
+	uint8 key = bytes[0];
+	if (key == '0' + fPadNumber)
+		BMessenger(this).SendMessage(new BMessage(PLAY));
+
+	BView::KeyDown(bytes, numBytes);
 }
 
 
