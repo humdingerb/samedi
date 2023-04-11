@@ -119,9 +119,14 @@ Pad::AttachedToWindow()
 void
 Pad::KeyDown(const char* bytes, int32 numBytes)
 {
-	uint8 key = bytes[0];
-	if (key == '0' + fPadNumber)
-		BMessenger(this).SendMessage(new BMessage(PLAY));
+	if (bytes[0] == B_ESCAPE) {
+		if (fDetectButton->Value() == B_CONTROL_ON)
+			_SetDetectMode(false);
+	} else {
+		uint8 key = bytes[0];
+		if (key == '0' + fPadNumber)
+			BMessenger(this).SendMessage(new BMessage(PLAY));
+	}
 
 	BView::KeyDown(bytes, numBytes);
 }
@@ -145,14 +150,11 @@ Pad::MessageReceived(BMessage* msg)
 		{
 			BString note;
 			if (fDetectButton->Value() == B_CONTROL_ON) {
+				fNoteControl->SetText("?");
 				_SetDetectMode(true);
-				note << "?";
-			} else {
+			} else
 				_SetDetectMode(false);
-				note << fNote;
-			}
 
-			fNoteControl->SetText(note);
 			break;
 		}
 		case SOLO:
@@ -212,14 +214,13 @@ Pad::Mute(int32 state)
 void
 Pad::Play(int32 note)
 {
-	if (fMuteButton->Value() == B_CONTROL_ON)
-		return;
-
 	if (fDetectButton->Value() == B_CONTROL_ON) {
 		SetNote(note);
-		_SetDetectMode(false);
 		return;
 	}
+
+	if (fMuteButton->Value() == B_CONTROL_ON)
+		return;
 
 	if (note != fNote)
 		return;
@@ -233,9 +234,7 @@ void
 Pad::SetNote(int32 note)
 {
 	fNote = note;
-	BString text;
-	text << note;
-	fNoteControl->SetText(text);
+	_SetDetectMode(false);
 }
 
 
@@ -282,7 +281,11 @@ Pad::_SetDetectMode(bool state)
 		fNoteControl->MarkAsInvalid(true);
 	} else {
 		fDetectButton->SetValue(B_CONTROL_OFF);
+		BString text;
+		text << fNote;
+		fNoteControl->SetText(text);
 		fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+		fNoteControl->MakeFocus(false);
 		fNoteControl->MarkAsInvalid(false);
 	}
 }
