@@ -121,19 +121,22 @@ Pad::MessageReceived(BMessage* msg)
 		case NOTE:
 		{
 			fNote = atoi(fNoteControl->Text());
-			fDetectButton->SetValue(B_CONTROL_OFF);
-			fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+			fNoteControl->MakeFocus(false);
+
+			if (fDetectButton->Value() == B_CONTROL_ON)
+				_SetDetectMode(false);
+
 			break;
 		}
 		case DETECT_NOTE:
 		{
 			BString note;
 			if (fDetectButton->Value() == B_CONTROL_ON) {
-				fNoteControl->SetToolTip(B_TRANSLATE("Press key"));
+				_SetDetectMode(true);
 				note << "?";
 			} else {
+				_SetDetectMode(false);
 				note << fNote;
-				fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 			}
 
 			fNoteControl->SetText(note);
@@ -200,8 +203,6 @@ Pad::Play(int32 note)
 		return;
 
 	if (fDetectButton->Value() == B_CONTROL_ON) {
-		fDetectButton->SetValue(B_CONTROL_OFF);
-		fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 		SetNote(note);
 		return;
 	}
@@ -255,4 +256,19 @@ Pad::_Eject()
 	fSamplePath = BPath("");
 	fPlayer = NULL;
 	delete fPlayer;
+}
+
+
+void
+Pad::_SetDetectMode(bool state)
+{
+	if (state) {
+		fDetectButton->SetValue(B_CONTROL_ON);
+		fNoteControl->SetToolTip(B_TRANSLATE("Press key"));
+		fNoteControl->MarkAsInvalid(true);
+	} else {
+		fDetectButton->SetValue(B_CONTROL_OFF);
+		fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+		fNoteControl->MarkAsInvalid(false);
+	}
 }

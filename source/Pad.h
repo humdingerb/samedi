@@ -38,6 +38,7 @@ public:
 
 private:
 	void			_Eject();
+	void			_SetDetectMode(bool state);
 
 	int32			fPadNumber;
 	int32			fNote;
