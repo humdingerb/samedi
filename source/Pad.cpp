@@ -36,7 +36,6 @@ Pad::Pad(int32 number, int32 note)
 	BString noteNr;
 	noteNr << fNote;
 	fNoteControl = new BTextControl("notecontrol", padNr, noteNr, new BMessage(NOTE));
-	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
 	fDetectButton = new BButton("detect" , new BMessage(DETECT_NOTE));
 	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
