@@ -38,7 +38,7 @@ Pad::Pad(int32 number, int32 note)
 	fNoteControl = new BTextControl("notecontrol", padNr, noteNr, new BMessage(NOTE));
 	fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
 
-	fDetectButton = new BButton("" , new BMessage(DETECT_NOTE));
+	fDetectButton = new BButton("detect" , new BMessage(DETECT_NOTE));
 	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fDetectButton->SetToolTip(B_TRANSLATE("Detect Midi note"));
 
@@ -64,7 +64,7 @@ Pad::Pad(int32 number, int32 note)
 	// limit widget sizes
 	float height;
 	fNoteControl->GetPreferredSize(NULL, &height);
-	BSize size(height, height);
+	BSize size(height + 2, height);
 	fMuteButton->SetExplicitSize(size);
 	fSoloButton->SetExplicitSize(size);
 	fLoopButton->SetExplicitSize(size);

@@ -31,6 +31,10 @@ public:
 	void			MessageReceived(BMessage* msg);
 
 private:
+	BMenuBar*		_BuildMenu();
+	BView*			_BuildPadViews();
+	BView*			_BuildHeaderView();
+
 	void			_PopulateOpenRecentMenu();
 	void			_PopulateMidiInMenu();
 	void			_HandleMIDI(BMessage* msg);

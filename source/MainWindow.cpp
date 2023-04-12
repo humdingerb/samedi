@@ -11,6 +11,7 @@
 
 #include <Box.h>
 #include <Catalog.h>
+#include <ControlLook.h>
 #include <File.h>
 #include <FindDirectory.h>
 #include <LayoutBuilder.h>
@@ -22,6 +23,7 @@
 #include <Screen.h>
 #include <ScrollView.h>
 #include <SeparatorView.h>
+#include <StringView.h>
 
 #include <compat/sys/stat.h>
 #include <stdio.h>
@@ -85,64 +87,19 @@ MainWindow::MainWindow()
 	for (int32 i = 0; i < kPadCount; i++)
 		fPads[i] = new Pad(i, kDefaultNote + i);
 
-	// building menu
-	BMenuBar* menuBar = new BMenuBar("menubar");
-	BMenu* menu = new BMenu(B_TRANSLATE("File"));
-
-	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
-		new BMessage(OPEN_ENSEMBLE), 'O');
-	menu->AddItem(menuItem);
-
-	fOpenRecentMenu = new BMenu(B_TRANSLATE("Open recent"));
-	menuItem = new BMenuItem(fOpenRecentMenu);
-	menu->AddItem(menuItem);
-
-	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
-	fSaveMenu->SetEnabled(false);
-	menu->AddItem(fSaveMenu);
-
-	menuItem = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
-		new BMessage(SAVE_AS_ENSEMBLE), 'S', B_SHIFT_KEY);
-	menu->AddItem(menuItem);
-
-	menu->AddSeparatorItem();
-	menuItem = new BMenuItem(B_TRANSLATE("About Samedi"), new BMessage(B_ABOUT_REQUESTED));
-	menuItem->SetTarget(be_app);
-	menu->AddItem(menuItem);
-
-	menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
-	menu->AddItem(menuItem);
-	menuBar->AddItem(menu);
-
-	fMidiInMenu = new BMenu(B_TRANSLATE("Midi in"));
-	menuBar->AddItem(fMidiInMenu);
-
-	// building layout
-	BView* padView = new BView("padView", 0);
-	BLayoutBuilder::Group<>(padView, B_VERTICAL, 0)
-		.Add(fPads[0])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[1])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[2])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[3])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[4])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[5])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[6])
-		.Add(new BSeparatorView(B_HORIZONTAL))
-		.Add(fPads[7]);
-
-	padView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
+	// build layouts
+	BMenuBar* menuBar = _BuildMenu();
+	BView* padView = _BuildPadViews();
+	BView* headerView = _BuildHeaderView();
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 0)
 		.Add(menuBar)
+		.Add(headerView)
+		.Add(new BSeparatorView(B_HORIZONTAL))
 		.Add(padView)
 		.End();
 
+	// create MidiConsumer
 	fMessenger = new BMessenger(this, NULL);
 	fConsumer = new MidiConsumer(fMessenger);
 	fRoster = BMidiRoster::MidiRoster();
@@ -326,6 +283,121 @@ MainWindow::MessageReceived(BMessage* msg)
 	}
 }
 
+
+// #pragma mark -
+
+
+BMenuBar*
+MainWindow::_BuildMenu()
+{
+	BMenuBar* menuBar = new BMenuBar("menubar");
+	BMenu* menu = new BMenu(B_TRANSLATE("File"));
+
+	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
+		new BMessage(OPEN_ENSEMBLE), 'O');
+	menu->AddItem(menuItem);
+
+	fOpenRecentMenu = new BMenu(B_TRANSLATE("Open recent"));
+	menuItem = new BMenuItem(fOpenRecentMenu);
+	menu->AddItem(menuItem);
+
+	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
+	fSaveMenu->SetEnabled(false);
+	menu->AddItem(fSaveMenu);
+
+	menuItem = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
+		new BMessage(SAVE_AS_ENSEMBLE), 'S', B_SHIFT_KEY);
+	menu->AddItem(menuItem);
+
+	menu->AddSeparatorItem();
+	menuItem = new BMenuItem(B_TRANSLATE("About Samedi"), new BMessage(B_ABOUT_REQUESTED));
+	menuItem->SetTarget(be_app);
+	menu->AddItem(menuItem);
+
+	menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
+	menu->AddItem(menuItem);
+	menuBar->AddItem(menu);
+
+	fMidiInMenu = new BMenu(B_TRANSLATE("Midi in"));
+	menuBar->AddItem(fMidiInMenu);
+
+	return menuBar;
+}
+
+BView*
+MainWindow::_BuildPadViews()
+{
+	// building layout padView
+	BView* padView = new BView("padView", 0);
+	BLayoutBuilder::Group<>(padView, B_VERTICAL, 0)
+		.Add(fPads[0])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[1])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[2])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[3])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[4])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[5])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[6])
+		.Add(new BSeparatorView(B_HORIZONTAL))
+		.Add(fPads[7]);
+
+	padView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
+
+	return padView;
+}
+
+
+BView*
+MainWindow::_BuildHeaderView()
+{
+	BStringView* pad = new BStringView("", B_TRANSLATE_COMMENT("Midi note",
+		"Header, as short as the English term if possible"));
+	BStringView* modes = new BStringView("", B_TRANSLATE_COMMENT("Modes",
+		"Header, as short as the English term if possible"));
+	BStringView* sample = new BStringView("", B_TRANSLATE("Sample file"));
+	sample->SetAlignment(B_ALIGN_CENTER);
+
+	BStringView* dummy = new BStringView("", "");
+
+	BFont font(be_plain_font);
+	font.SetSize(ceilf(font.Size() * 0.8));
+	pad->SetFont(&font, B_FONT_SIZE);
+	modes->SetFont(&font, B_FONT_SIZE);
+	sample->SetFont(&font, B_FONT_SIZE);
+	dummy->SetFont(&font, B_FONT_SIZE);
+
+	float width, height;
+	fPads[0]->FindView("notecontrol")->GetPreferredSize(&width, &height);
+	pad->SetExplicitSize(BSize(width, B_SIZE_UNSET));
+	modes->SetExplicitSize(BSize(height * 3, B_SIZE_UNSET));
+	fPads[0]->FindView("sample")->GetPreferredSize(&width, &height);
+	sample->SetExplicitSize(BSize(width, B_SIZE_UNSET));
+	dummy->SetExplicitSize(BSize(height * 2, B_SIZE_UNSET));
+
+	const float kSpacing = be_control_look->DefaultItemSpacing();
+	BView* headerView = new BView("headerView", B_SUPPORTS_LAYOUT);
+	BLayoutBuilder::Group<>(headerView, B_HORIZONTAL, 0)
+		.SetInsets(B_USE_WINDOW_SPACING, kSpacing / 2, B_USE_WINDOW_SPACING, kSpacing / 2)
+		.Add(pad)
+		.Add(modes)
+		.AddGlue()
+		.Add(sample)
+		.Add(dummy)
+		.AddGlue()
+	.End();
+
+	headerView->SetExplicitMinSize(BSize(B_SIZE_UNSET, B_SIZE_UNSET));
+
+	rgb_color color = tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_1_TINT);
+	headerView->SetViewColor(color);
+
+	return headerView;
+}
 
 void
 MainWindow::_PopulateMidiInMenu()
