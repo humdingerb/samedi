@@ -42,6 +42,7 @@ private:
 	void			_LoadSettings();
 	void			_SaveSettings();
 
+	void			_OpenHelp();
 	void			_LoadEnsemble(entry_ref ref);
 	void			_SaveEnsemble();
 	void			_AddRecentEnsemble(BString path);

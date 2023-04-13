@@ -22,6 +22,7 @@
 #define DETECT_NOTE 'dtct'
 #define NEW_NOTE 'newn'
 
+#define HELP 'help'
 #define OPEN_ENSEMBLE 'open'
 #define OPEN_RECENT 'opre'
 #define SAVE_ENSEMBLE 'save'

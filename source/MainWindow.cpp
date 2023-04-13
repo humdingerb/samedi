@@ -20,6 +20,8 @@
 #include <Node.h>
 #include <NodeInfo.h>
 #include <Path.h>
+#include <PathFinder.h>
+#include <Roster.h>
 #include <Screen.h>
 #include <ScrollView.h>
 #include <SeparatorView.h>
@@ -159,16 +161,9 @@ MainWindow::MessageReceived(BMessage* msg)
 			_HandleMIDI(msg);
 			break;
 		}
-		case MIDI_IN_MENU:
+		case HELP:
 		{
-			int32 id = msg->FindInt32("port_id");
-			BMidiProducer* producer = fRoster->FindProducer(id);
-			if (producer) {
-				if (producer->IsConnected(fConsumer))
-					producer->Disconnect(fConsumer);
-				else
-					producer->Connect(fConsumer);
-			}
+			_OpenHelp();
 			break;
 		}
 		case OPEN_ENSEMBLE:
@@ -215,6 +210,18 @@ MainWindow::MessageReceived(BMessage* msg)
 				BEntry entry(&directory, name);
 				fEnsemblePath = BPath(&entry);
 				_SaveEnsemble();
+			}
+			break;
+		}
+		case MIDI_IN_MENU:
+		{
+			int32 id = msg->FindInt32("port_id");
+			BMidiProducer* producer = fRoster->FindProducer(id);
+			if (producer) {
+				if (producer->IsConnected(fConsumer))
+					producer->Disconnect(fConsumer);
+				else
+					producer->Connect(fConsumer);
 			}
 			break;
 		}
@@ -291,33 +298,42 @@ BMenuBar*
 MainWindow::_BuildMenu()
 {
 	BMenuBar* menuBar = new BMenuBar("menubar");
-	BMenu* menu = new BMenu(B_TRANSLATE("File"));
+	BMenu* menu;
+	BMenuItem* item;
 
-	BMenuItem* menuItem = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
+	// menu Samedi
+	menu = new BMenu(B_TRANSLATE_SYSTEM_NAME("Samedi"));
+	item = new BMenuItem(B_TRANSLATE("Help" B_UTF8_ELLIPSIS), new BMessage(HELP), 'H');
+	menu->AddItem(item);
+
+	item = new BMenuItem(B_TRANSLATE("About Samedi"), new BMessage(B_ABOUT_REQUESTED));
+	item->SetTarget(be_app);
+	menu->AddItem(item);
+
+	item = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
+	menu->AddItem(item);
+	menuBar->AddItem(menu);
+
+	// menu File
+	menu = new BMenu(B_TRANSLATE("File"));
+	item = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
 		new BMessage(OPEN_ENSEMBLE), 'O');
-	menu->AddItem(menuItem);
+	menu->AddItem(item);
 
 	fOpenRecentMenu = new BMenu(B_TRANSLATE("Open recent"));
-	menuItem = new BMenuItem(fOpenRecentMenu);
-	menu->AddItem(menuItem);
+	item = new BMenuItem(fOpenRecentMenu);
+	menu->AddItem(item);
 
 	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
 	fSaveMenu->SetEnabled(false);
 	menu->AddItem(fSaveMenu);
 
-	menuItem = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
+	item = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
 		new BMessage(SAVE_AS_ENSEMBLE), 'S', B_SHIFT_KEY);
-	menu->AddItem(menuItem);
-
-	menu->AddSeparatorItem();
-	menuItem = new BMenuItem(B_TRANSLATE("About Samedi"), new BMessage(B_ABOUT_REQUESTED));
-	menuItem->SetTarget(be_app);
-	menu->AddItem(menuItem);
-
-	menuItem = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
-	menu->AddItem(menuItem);
+	menu->AddItem(item);
 	menuBar->AddItem(menu);
 
+	// menu Midi in
 	fMidiInMenu = new BMenu(B_TRANSLATE("Midi in"));
 	menuBar->AddItem(fMidiInMenu);
 
@@ -495,6 +511,26 @@ MainWindow::_SaveSettings()
 	BFile file(path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
 	if (file.InitCheck() == B_OK)
 		settings.Flatten(&file);
+}
+
+
+void
+MainWindow::_OpenHelp()
+{
+	BPathFinder pathFinder;
+	BStringList paths;
+	BPath path;
+
+	pathFinder.FindPaths(B_FIND_PATH_DOCUMENTATION_DIRECTORY,
+		"packages/Samedi", paths);
+	if (!paths.IsEmpty()) {
+		if (path.SetTo(paths.StringAt(0)) == B_OK) {
+			path.Append("ReadMe.html");
+			BMessage message(B_REFS_RECEIVED);
+			message.AddString("url", path.Path());
+			be_roster->Launch("text/html", &message);
+		}
+	}
 }
 
 
