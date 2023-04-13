@@ -123,7 +123,7 @@ Pad::KeyDown(const char* bytes, int32 numBytes)
 			_SetDetectMode(false);
 	} else {
 		uint8 key = bytes[0];
-		if (key == '0' + fPadNumber)
+		if (key == '0' + fPadNumber + 1)
 			BMessenger(this).SendMessage(new BMessage(PLAY));
 	}
 
