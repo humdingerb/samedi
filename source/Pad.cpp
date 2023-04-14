@@ -41,7 +41,7 @@ Pad::Pad(int32 number, int32 note)
 	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fDetectButton->SetToolTip(B_TRANSLATE("Detect Midi note"));
 
-	fMuteButton = new BButton("M", NULL);
+	fMuteButton = new BButton("M", new BMessage(MUTE));
 	fMuteButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fMuteButton->SetToolTip(B_TRANSLATE("Mute"));
 
@@ -101,6 +101,13 @@ Pad::Pad(int32 number, int32 note)
 }
 
 
+Pad::~Pad()
+{
+	if (fPlayer != NULL)
+		delete fPlayer;
+}
+
+
 void
 Pad::AttachedToWindow()
 {
@@ -156,6 +163,11 @@ Pad::MessageReceived(BMessage* msg)
 
 			break;
 		}
+		case MUTE:
+		{
+			Mute(fMuteButton->Value());
+			break;
+		}
 		case SOLO:
 		{
 			msg->AddInt32("pad", fPadNumber);
@@ -176,9 +188,7 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case PLAY:
 		{
-			if (fMuteButton->Value() == B_CONTROL_ON)
-				break;
-			if (fPlayer != NULL)
+			if ((fPlayer != NULL) and (fMuteButton->Value() == B_CONTROL_OFF))
 				fPlayer->StartPlaying();
 			break;
 		}
@@ -204,9 +214,11 @@ Pad::Mute(int32 state)
 {
 	fMuteButton->SetValue(state);
 
-	// in case this pad was in solo mode
-	if (state == B_CONTROL_ON)
-		fSoloButton->SetValue(B_CONTROL_OFF);
+	if (state == B_CONTROL_ON) {
+		fSoloButton->SetValue(B_CONTROL_OFF); // in case this pad was in solo mode
+		if (fPlayer != NULL)
+			fPlayer->StopPlaying();
+	}
 }
 
 

@@ -22,7 +22,7 @@
 class Pad : public BView {
 public:
 					Pad(int32 number, int32 note);
-	virtual			~Pad() {};
+	virtual			~Pad();
 
 	virtual	void	AttachedToWindow();
 	void			KeyDown(const char* bytes, int32 numBytes);
