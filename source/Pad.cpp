@@ -125,6 +125,9 @@ Pad::AttachedToWindow()
 void
 Pad::KeyDown(const char* bytes, int32 numBytes)
 {
+	if (Window()->IsActive() == false)
+		return;
+
 	if (bytes[0] == B_ESCAPE) {
 		if (fDetectButton->Value() == B_CONTROL_ON)
 			_SetDetectMode(false);

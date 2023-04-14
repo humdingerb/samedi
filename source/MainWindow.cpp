@@ -310,6 +310,8 @@ MainWindow::_BuildMenu()
 	item->SetTarget(be_app);
 	menu->AddItem(item);
 
+	menu->AddSeparatorItem();
+
 	item = new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q');
 	menu->AddItem(item);
 	menuBar->AddItem(menu);
