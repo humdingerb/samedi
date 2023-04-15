@@ -106,6 +106,14 @@ MainWindow::MainWindow()
 	fConsumer = new MidiConsumer(fMessenger);
 	fRoster = BMidiRoster::MidiRoster();
 	fRoster->StartWatching(fMessenger);
+
+	// Auto-connect, to first MIDI producer found
+	int32 id = 0;
+	BMidiProducer* producer = NULL;
+	if ((producer = fRoster->NextProducer(&id)) != NULL) {
+		if (producer->IsValid())
+			producer->Connect(fConsumer);
+	}
 }
 
 
@@ -161,6 +169,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			_HandleMIDI(msg);
 			break;
 		}
+
 		case HELP:
 		{
 			_OpenHelp();
@@ -431,6 +440,8 @@ MainWindow::_PopulateMidiInMenu()
 			fMidiInMenu->AddItem(item);
 			if (producer->IsConnected(fConsumer))
 				item->SetMarked(true);
+			else
+				item->SetMarked(false);
 		}
 	}
 }
