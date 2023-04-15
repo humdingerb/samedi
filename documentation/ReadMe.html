@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="robots" content="all" />
+	<link rel="stylesheet" type="text/css" href="./_doc.css" />
+	<title>Samedi</title>
+</head>
+<body>
+<div align = "center">
+<img width="64" height="64" src="./images/ffmpegGUI_icon_64.png" alt="ffmpegGUI icon" />
+<p><span style="font-size: 1.5em; font-weight:bold">Samedi</span><br />
+for <a href="https://www.haiku-os.org">Haiku</a></p>
+<hr />
+</div>
+
+<div id="content">
+<p>Samedi is a little app to load audio samples into up to 8 pads and assign them to MIDI notes. The samples can then be played back by pressing the set key on your MIDI keyboard. Alternatively Samedi also reacts to the number keys on your computer keyboard.</p>
+
+<div align = "center">
+<img src="./images/window.png" alt="Samedi's window" />
+</div>
+
+<p>Using Samedi should be pretty self-explaining.<br />
+You can load any audio file by clicking the <span class="button">&lt;click to load a sample&gt;</span> button of an empty pad. That button label turns into the loaded file name, click it to load another sample. The pads also accept drag'n'dropped audio files.</p>
+
+<p>All samples of the 8 pads can be saved as so-called 'Ensembles' from the <span class="menu">File</span> menu. Ensembles can also be loaded via drag'n'drop.<br />
+Note: These ensembles don't contain the actual sample files, just their location on the harddisk. If you move or rename those files, Samedi won't find them anymore.</p>
+
+<p>Each tab has three buttons to set a playback mode: <span class="button">M</span> to mute the pad, <span class="button">S</span> for solo playback (all other pads get muted), and <span class="button">∞</span> to play the loaded sample in a loop.</p>
+
+<p>A pad's sample is played back either by clicking its <span class="button">⯈</span> button, pressing the pad's number on the computer keyboard (<span class="key">1</span> to <span class="key">8</span>), or hitting the set MIDI note on your keyboard.<br />
+You can enter the MIDI note in the text box on the left, or detect the pressed key after clicking the narrow button beside it.</p>
+
+<p>The menu <span class="menu">Midi in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the one Samedi will listen on.</p>
+
+<p>To empty a pad, click the <span class="button">⏏</span> button at the far right.</p>
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="download" name="download">Download</a></h2>
+
+<p>Samedi is directly available through HaikuDepot from the HaikuPorts repository. You can also build it yourself using <a href="https://github.com/haikuports">Haikuporter</a>. The source is hosted at <a href="https://github.com/humdingerb/samedi">GitHub</a>.</p>
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="bugs_feedback" name="bugs_feedback">Bugreports &amp; Feedback</a></h2>
+
+<p>Please use GitHub's <a href="https://github.com/humdingerb/samedi/issues">issue tracker</a> if you experience unusual difficulties or have other suggestions. You can help translating Samedi at <a href="https://i18n.kacperkasper.pl/projects/">Polyglot</a>.</p>
+
+
+<!--<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="history" name="history">History</a></h2>
+-->
+</div>
+</body>
+</html>
