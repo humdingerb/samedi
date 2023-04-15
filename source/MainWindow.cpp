@@ -46,16 +46,16 @@ bool
 AudioFilter::Filter(const entry_ref* ref, BNode* node, struct stat_beos* stat,
 	const char* fileType)
 {
-	if (S_ISDIR(stat->st_mode))
+	BEntry entry(ref, true); // traverse links
+
+	// allow folders and links of folders
+	if (entry.IsDirectory())
 		return true;
 
-	if (S_ISLNK(stat->st_mode)) {
-		BEntry entry(ref, true);
-		return entry.IsDirectory();
-	}
-
+	// allow audio and linked audio files
 	char mimeType[B_MIME_TYPE_LENGTH];
-	BNodeInfo(node).GetType(mimeType);
+	BNode traversedNode(&entry); // create a new node from the link-traversed BEntry
+	BNodeInfo(&traversedNode).GetType(mimeType);
 	if (strncmp("audio/", mimeType, 6) == 0)
 		return true;
 
@@ -146,7 +146,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			if (msg->FindRef("refs", &ref) != B_OK)
 				break;
 
-			BEntry entry(&ref);
+			BEntry entry(&ref, true); // traverse links
 			BNode node(&entry);
 			char mimeType[B_MIME_TYPE_LENGTH];
 			BNodeInfo(&node).GetType(mimeType);
