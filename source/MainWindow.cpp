@@ -336,7 +336,7 @@ MainWindow::_BuildMenu()
 	menuBar->AddItem(menu);
 
 	// menu Midi in
-	fMidiInMenu = new BMenu(B_TRANSLATE("Midi in"));
+	fMidiInMenu = new BMenu(B_TRANSLATE("MIDI in"));
 	menuBar->AddItem(fMidiInMenu);
 
 	return menuBar;
@@ -373,7 +373,7 @@ MainWindow::_BuildPadViews()
 BView*
 MainWindow::_BuildHeaderView()
 {
-	BStringView* pad = new BStringView("", B_TRANSLATE_COMMENT("Midi note",
+	BStringView* pad = new BStringView("", B_TRANSLATE_COMMENT("MIDI note",
 		"Header, as short as the English term if possible"));
 	BStringView* modes = new BStringView("", B_TRANSLATE_COMMENT("Modes",
 		"Header, as short as the English term if possible"));
