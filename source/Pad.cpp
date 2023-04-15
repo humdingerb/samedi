@@ -281,8 +281,11 @@ Pad::_Eject()
 {
 	fSampleButton->SetLabel(B_TRANSLATE_NOCOLLECT(kNoSample));
 	fSamplePath = BPath("");
-	fPlayer = NULL;
-	delete fPlayer;
+	if (fPlayer != NULL) {
+		fPlayer->StopPlaying();
+		fPlayer = NULL;
+		delete fPlayer;
+	}
 }
 
 
