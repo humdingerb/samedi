@@ -1,0 +1,22 @@
+resource app_signature "application/x-vnd.humdinger-samedi";
+
+resource app_flags B_MULTIPLE_LAUNCH;
+
+resource app_version {
+	major  = 1,
+	middle = 0,
+	minor = 0,
+
+	/* 0 = development	1 = alpha			2 = beta
+	   3 = gamma		4 = golden master	5 = final */
+	variety = 5,
+
+	internal = 0,
+
+	short_info = "Play samples via MIDI",
+	long_info  = "Load up to 8 audio samples and play them via MIDI"
+};
+
+resource vector_icon {
+
+};
