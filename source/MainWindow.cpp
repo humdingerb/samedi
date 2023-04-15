@@ -135,10 +135,7 @@ MainWindow::~MainWindow()
 void
 MainWindow::MenusBeginning()
 {
-	fMidiInMenu->RemoveItems(0, fMidiInMenu->CountItems(), true);
 	_PopulateMidiInMenu();
-
-	fOpenRecentMenu->RemoveItems(0, fOpenRecentMenu->CountItems(), true);
 	_PopulateOpenRecentMenu();
 }
 
@@ -429,6 +426,8 @@ MainWindow::_BuildHeaderView()
 void
 MainWindow::_PopulateMidiInMenu()
 {
+	fMidiInMenu->RemoveItems(0, fMidiInMenu->CountItems(), true);
+
 	int32 id = 0;
 	BMidiProducer* producer = NULL;
 
@@ -444,12 +443,27 @@ MainWindow::_PopulateMidiInMenu()
 				item->SetMarked(false);
 		}
 	}
+
+	// Auto-connect, if only one MIDI producer was found
+	if (fMidiInMenu->CountItems() == 1) {
+		int32 id = 0;
+		BMidiProducer* producer = NULL;
+		if ((producer = fRoster->NextProducer(&id)) != NULL) {
+			if (producer->IsValid()) {
+				producer->Connect(fConsumer);
+				fMidiInMenu->ItemAt(0)->SetMarked(true);
+			}
+		}
+	}
+
 }
 
 
 void
 MainWindow::_PopulateOpenRecentMenu()
 {
+	fOpenRecentMenu->RemoveItems(0, fOpenRecentMenu->CountItems(), true);
+
 	int32 menu = 0;
 	BString filepath;
 	for (int32 i = fRecentEnsemblePaths.CountStrings() - 1; i >= 0; i--) {
@@ -471,8 +485,11 @@ MainWindow::_PopulateOpenRecentMenu()
 void
 MainWindow::_HandleMIDI(BMessage* msg)
 {
-	int32 op;
+	int32 op, id, producerid;
 	msg->FindInt32("be:op", &op);
+	msg->FindInt32("be:id", &id);
+	msg->FindInt32("be:producer", &producerid);
+	// printf("op: %i, id: %i, producerid: %i\n", op, id, producerid);
 	switch (op) {
 		case B_MIDI_REGISTERED:
 		{
@@ -482,6 +499,12 @@ MainWindow::_HandleMIDI(BMessage* msg)
 				printf("Found producer %d: %s\n", id, producer->Name());
 				producer->Connect(fConsumer);
 			}
+			break;
+		}
+		case B_MIDI_UNREGISTERED:
+		case B_MIDI_DISCONNECTED:
+		{
+			_PopulateMidiInMenu();
 			break;
 		}
 	}
