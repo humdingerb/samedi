@@ -39,7 +39,7 @@ Pad::Pad(int32 number, int32 note)
 
 	fDetectButton = new BButton("detect" , new BMessage(DETECT_NOTE));
 	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
-	fDetectButton->SetToolTip(B_TRANSLATE("Detect Midi note"));
+	fDetectButton->SetToolTip(B_TRANSLATE("Detect MIDI note"));
 
 	fMuteButton = new BButton("M", new BMessage(MUTE));
 	fMuteButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
@@ -53,7 +53,7 @@ Pad::Pad(int32 number, int32 note)
 	fLoopButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
 	fLoopButton->SetToolTip(B_TRANSLATE("Loop"));
 
-	fSampleButton = new BButton("sample", kNoSample, new BMessage(OPEN_SAMPLE));
+	fSampleButton = new BButton("sample", B_TRANSLATE_NOCOLLECT(kNoSample), new BMessage(OPEN_SAMPLE));
 	fSampleButton->SetFlat(true);
 	fSampleButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
@@ -269,7 +269,7 @@ Pad::SetSample(BPath sample)
 		fPlayer->Preload();
 		fSampleButton->SetLabel(fSamplePath.Leaf());
 	} else {
-		BString label(kSampleNotFound);
+		BString label(B_TRANSLATE_NOCOLLECT(kSampleNotFound));
 		label.ReplaceFirst("%samplefile%", fSamplePath.Leaf());
 		fSampleButton->SetLabel(label);
 	}
@@ -279,7 +279,7 @@ Pad::SetSample(BPath sample)
 void
 Pad::_Eject()
 {
-	fSampleButton->SetLabel(kNoSample);
+	fSampleButton->SetLabel(B_TRANSLATE_NOCOLLECT(kNoSample));
 	fSamplePath = BPath("");
 	fPlayer = NULL;
 	delete fPlayer;
@@ -298,7 +298,7 @@ Pad::_SetDetectMode(bool state)
 		BString text;
 		text << fNote;
 		fNoteControl->SetText(text);
-		fNoteControl->SetToolTip(B_TRANSLATE("Midi note"));
+		fNoteControl->SetToolTip(B_TRANSLATE("MIDI note"));
 		fNoteControl->MakeFocus(false);
 		fNoteControl->MarkAsInvalid(false);
 	}
