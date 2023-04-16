@@ -119,11 +119,11 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+	fConsumer->Release();
 	delete fOpenSamplePanel;
 	delete fOpenEnsemblePanel;
 	delete fSaveEnsemblePanel;
 	delete fMessenger;
-	fConsumer->Release();
 
 	_SaveSettings();
 }

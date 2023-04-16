@@ -29,6 +29,7 @@ App::App()
 
 App::~App()
 {
+	delete fMainWindow;
 }
 
 
