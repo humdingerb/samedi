@@ -26,7 +26,7 @@ void
 MidiConsumer::NoteOn(uchar channel, uchar note, uchar velocity, bigtime_t time)
 {
 	int32 id = GetProducerID();
-	printf("%lu: [Producer %d][Channel %d / Note %d]  Note on with velocity %d\n", time, id,
+	printf("%" B_PRId64 ": [Producer %" B_PRId32 "][Channel %d / Note %d]  Note on with velocity %d\n", time, id,
 		channel, note, velocity);
 
 	BMessage* msg = new BMessage(PLAY);

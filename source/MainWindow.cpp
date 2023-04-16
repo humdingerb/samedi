@@ -184,8 +184,8 @@ MainWindow::MessageReceived(BMessage* msg)
 		{
 			int32 menu;
 			BString filepath;
-			if ((msg->FindInt32("menu", &menu) == B_OK) and
-				(msg->FindString("filepath", &filepath) == B_OK)){
+			if ((msg->FindInt32("menu", &menu) == B_OK) &&
+				(msg->FindString("filepath", &filepath) == B_OK)) {
 				entry_ref ref;
 				get_ref_for_path(filepath.String(), &ref);
 				_LoadEnsemble(ref);
@@ -244,7 +244,7 @@ MainWindow::MessageReceived(BMessage* msg)
 		{
 			int32 soloPad;
 			int32 state;
-			if ((msg->FindInt32("pad", &soloPad) == B_OK) and
+			if ((msg->FindInt32("pad", &soloPad) == B_OK) &&
 				(msg->FindInt32("solo", &state) == B_OK)) {
 
 				if (state == B_CONTROL_ON) {
@@ -290,7 +290,7 @@ MainWindow::MessageReceived(BMessage* msg)
 		{
 			entry_ref ref;
 			int32 pad;
-			if ((msg->FindRef("refs", &ref) == B_OK) and
+			if ((msg->FindRef("refs", &ref) == B_OK) &&
 				(msg->FindInt32("pad", &pad) == B_OK)) {
 				BPath path(&ref);
 				_SetSample(pad, path.Path());
@@ -510,7 +510,7 @@ MainWindow::_HandleMIDI(BMessage* msg)
 			int32 id = 0;
 			BMidiProducer* producer;
 			if ((producer = fRoster->NextProducer(&id)) != NULL) {
-				printf("Found producer %d: %s\n", id, producer->Name());
+				printf("Found producer %" B_PRId32 ": %s\n", id, producer->Name());
 				producer->Connect(fConsumer);
 			}
 			break;

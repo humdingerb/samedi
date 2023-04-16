@@ -15,6 +15,7 @@
 #include <LayoutBuilder.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "Pad"
@@ -191,7 +192,7 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case PLAY:
 		{
-			if ((fPlayer != NULL) and (fMuteButton->Value() == B_CONTROL_OFF))
+			if ((fPlayer != NULL) && (fMuteButton->Value() == B_CONTROL_OFF))
 				fPlayer->StartPlaying();
 			break;
 		}
