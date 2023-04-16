@@ -22,6 +22,8 @@ public:
 		void			AboutRequested();
 
 private:
+		void			_ShowLatencyAlert();
+
 		MainWindow*		fMainWindow;
 };
 

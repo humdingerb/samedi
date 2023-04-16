@@ -30,6 +30,8 @@ public:
 	void			MenusBeginning();
 	void			MessageReceived(BMessage* msg);
 
+	bool			IsFirstLaunch() { return fFirstLaunch; };
+
 private:
 	BMenuBar*		_BuildMenu();
 	BView*			_BuildPadViews();
@@ -54,6 +56,7 @@ private:
 	void			_SetNote(int32 pad, int32 note);
 
 	Pad*			fPads[kPadCount];
+	bool			fFirstLaunch;
 
 	BFilePanel*		fOpenSamplePanel;
 	BFilePanel*		fOpenEnsemblePanel;

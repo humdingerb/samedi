@@ -7,7 +7,11 @@
  */
 
 #include <AboutWindow.h>
+#include <Alert.h>
 #include <Catalog.h>
+#include <PathFinder.h>
+#include <Roster.h>
+#include <StringList.h>
 
 #include "App.h"
 #include "MainWindow.h"
@@ -24,6 +28,9 @@ App::App()
 {
 	fMainWindow = new MainWindow();
 	fMainWindow->Show();
+
+	if (fMainWindow->IsFirstLaunch())
+		_ShowLatencyAlert();
 }
 
 
@@ -43,6 +50,43 @@ App::AboutRequested()
 		"via notes played over MIDI."));
 	aboutW->AddCopyright(2023, "Humdinger");
 	aboutW->Show();
+}
+
+
+void
+App::_ShowLatencyAlert()
+{
+	BString text(B_TRANSLATE("If you experience delays between hitting a key and "
+		"hearing a sound, please see the 'Latency' section of Samedi's Help document."));
+
+	BAlert* alert = new BAlert("First launch", text,
+		B_TRANSLATE("Cancel"), B_TRANSLATE("Show latency help"));
+	alert->SetShortcut(0, B_ESCAPE);
+	alert->MoveTo(BPoint(280, 250));
+	int32 choice = alert->Go();
+
+	switch (choice) {
+		case 0:
+			return;
+		case 1:
+		{
+			BPathFinder pathFinder;
+			BStringList paths;
+			BPath path;
+
+			pathFinder.FindPaths(B_FIND_PATH_DOCUMENTATION_DIRECTORY,
+				"packages/Samedi", paths);
+			if (!paths.IsEmpty()) {
+				if (path.SetTo(paths.StringAt(0)) == B_OK) {
+					BMessage message(B_REFS_RECEIVED);
+					BString url;
+					url << "file://" << path.Path() << "/ReadMe.html#latency";
+					message.AddString("url", url);
+					be_roster->Launch("text/html", &message);
+				}
+			}
+		}
+	}
 }
 
 

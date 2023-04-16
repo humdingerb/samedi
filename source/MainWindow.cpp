@@ -9,7 +9,6 @@
 
 #include "MainWindow.h"
 
-#include <Box.h>
 #include <Catalog.h>
 #include <ControlLook.h>
 #include <File.h>
@@ -514,6 +513,7 @@ MainWindow::_HandleMIDI(BMessage* msg)
 void
 MainWindow::_LoadSettings()
 {
+	fFirstLaunch = false;
 	fSettings = new BMessage();
 
 	BPath path;
@@ -523,7 +523,10 @@ MainWindow::_LoadSettings()
 	path.Append("Samedi_settings");
 	BFile file(path.Path(), B_READ_ONLY);
 
-	if ((file.InitCheck() == B_OK) and (fSettings->Unflatten(&file) != B_OK))
+	if (file.InitCheck() != B_OK)
+		fFirstLaunch = true;
+
+	if (fSettings->Unflatten(&file) != B_OK)
 		fSettings->AddRect("main window frame", BRect(200, 200, 600, 300));
 	else
 		fSettings->FindStrings("recent ensemble", &fRecentEnsemblePaths);
