@@ -15,7 +15,7 @@
 <p><span style="font-size: 1.5em; font-weight:bold">Samedi</span><br />
 for <a href="https://www.haiku-os.org">Haiku</a></p>
 <hr />
-<p id="index"><a href="#latency">Latency</a> &mdash; <a href="#tips">Tips &amp; Tricks</a> &mdash; 
+<p id="index"><a href="#latency">Usage</a> &mdash; <a href="#latency">Latency</a> &mdash; <a href="#tips">Tips &amp; Tricks</a> &mdash; 
 <a href="#download">Download</a> &mdash; <a href="#bugs_feedback">Bugreports &amp; Feedback</a> &mdash; <a href="#history">History</a></p>
 </div>
 <hr />
@@ -27,10 +27,14 @@ If you suffer from high latency, see the tip on <a href="#latency">Latency</a> b
 <img src="./images/window.png" alt="Samedi's window" />
 </div>
 
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="usage" name="usage">Usage</a></h2>
+
 <p>Using Samedi should be pretty self-explaining.<br />
 You can load any audio file by clicking the <span class="button">&lt;click to load a sample&gt;</span> button of an empty pad. That button label turns into the loaded file name, click it to load another sample. The pads also accept drag'n'dropped audio files.</p>
 
-<p>All samples of the 8 pads can be saved as so-called 'Ensembles' from the <span class="menu">File</span> menu. Ensembles can also be loaded via drag'n'drop.<br />
+<p>All samples of the 8 pads can be saved as so-called 'Ensembles' from the <span class="menu">Ensemble</span> menu. Ensembles can also be loaded via drag'n'drop.<br />
 Note: These ensembles don't contain the actual sample files, just their location on the harddisk. If you move or rename those files, Samedi won't find them anymore.</p>
 
 <p>Each tab has three buttons to set a playback mode: <span class="button">M</span> to mute the pad, <span class="button">S</span> for solo playback (all other pads get muted), and <span class="button">∞</span> to play the loaded sample in a loop.</p>
@@ -38,9 +42,9 @@ Note: These ensembles don't contain the actual sample files, just their location
 <p>A pad's sample is played back either by clicking its <span class="button">⯈</span> button, pressing the pad's number on the computer keyboard (<span class="key">1</span> to <span class="key">8</span>), or hitting the set MIDI note on your keyboard.<br />
 You can enter the MIDI note in the text box on the left, or detect the pressed key after clicking the narrow button beside it.</p>
 
-<p>The menu <span class="menu">Midi in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the ones that Samedi will listen to.</p>
+<p>The menu <span class="menu">MIDI in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the ones that Samedi will listen to.</p>
 
-<p>To empty a pad, click the <span class="button">⏏</span> button at the far right.</p>
+<p>To empty a pad, click the <span class="button">⏏</span> button at the far right. You can reset all pads at once with <span class="menu">Clear all pads</span> from the <span class="menu">Ensemble</span> menu.</p>
 
 <h2>
 <a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
@@ -71,7 +75,7 @@ play_buffer_count	4
 In this case, it may help to add a few seconds of silence to the end of the sample with an audio editor. Oh bother, I know…</p></li>
 <li><p>More than one instance of Samedi can run simultaneously, if you need more than 8 pads.</p></li>
 <li><p>More than one pad can react to the same MIDI note, in case you want to play back several samples with hitting a single key.</p></li>
-<li><p>You can select more than one device from the <span class="menu">MIDI-in</span> menu as sources for MIDI notes.</p></li>
+<li><p>You can select more than one device from the <span class="menu">MIDI in</span> menu as sources for MIDI notes.</p></li>
 </ul>
 
 <h2>
