@@ -333,12 +333,12 @@ MainWindow::_BuildMenu()
 
 	// menu File
 	menu = new BMenu(B_TRANSLATE("Ensemble"));
-	item = new BMenuItem(B_TRANSLATE("Open" B_UTF8_ELLIPSIS),
-		new BMessage(OPEN_ENSEMBLE), 'O');
-	menu->AddItem(item);
-
 	fOpenRecentMenu = new BMenu(B_TRANSLATE("Open recent"));
 	item = new BMenuItem(fOpenRecentMenu);
+	menu->AddItem(item);
+
+	item = new BMenuItem(B_TRANSLATE("Open" B_UTF8_ELLIPSIS),
+		new BMessage(OPEN_ENSEMBLE), 'O');
 	menu->AddItem(item);
 
 	fSaveMenu = new BMenuItem(B_TRANSLATE("Save"), new BMessage(SAVE_ENSEMBLE), 'S');
