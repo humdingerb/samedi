@@ -15,8 +15,10 @@
 <p><span style="font-size: 1.5em; font-weight:bold">Samedi</span><br />
 for <a href="https://www.haiku-os.org">Haiku</a></p>
 <hr />
+<p id="index"><a href="#latency">Latency</a> &mdash; <a href="#tips">Tips &amp; Tricks</a> &mdash; 
+<a href="#download">Download</a> &mdash; <a href="#bugs_feedback">Bugreports &amp; Feedback</a> &mdash; <a href="#history">History</a></p>
 </div>
-
+<hr />
 <div id="content">
 <p>Samedi is a little app to load audio samples into up to 8 pads and assign them to MIDI notes. The samples can then be played back by pressing the set key on your MIDI keyboard. Alternatively Samedi also reacts to the number keys on your computer keyboard.<br />
 If you suffer from high latency, see the tip on <a href="#latency">Latency</a> below.</p>
@@ -36,7 +38,7 @@ Note: These ensembles don't contain the actual sample files, just their location
 <p>A pad's sample is played back either by clicking its <span class="button">⯈</span> button, pressing the pad's number on the computer keyboard (<span class="key">1</span> to <span class="key">8</span>), or hitting the set MIDI note on your keyboard.<br />
 You can enter the MIDI note in the text box on the left, or detect the pressed key after clicking the narrow button beside it.</p>
 
-<p>The menu <span class="menu">Midi in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the one Samedi will listen on.</p>
+<p>The menu <span class="menu">Midi in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the ones that Samedi will listen to.</p>
 
 <p>To empty a pad, click the <span class="button">⏏</span> button at the far right.</p>
 
@@ -57,8 +59,20 @@ So, remove the commenting "#" of those lines and try with:</p>
 play_buffer_frames	1024
 play_buffer_count	4
 </pre>
-<p>The settings files of other chipsets use different keywords, but generally work similarly.</p>
-<p>To try out your new settings, click on <span class="button">Restart media services</span> of the "Audio settings" of the Media preferences.</p>
+<p>The settings files of other chipsets may use different keywords, but generally work similarly.</p>
+<p>To try out your new settings, click on <span class="button">Restart media services</span> of the "Audio settings" of the Media preferences. You'll have to restart Samedi as well.</p>
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="tips" name="tips">Tips &amp; Tricks</a></h2>
+<p>The tip how to decrease latency above is probably the most vital. Here are a few more less spectacular ones:</p>
+<ul>
+<li><p>Haiku's sound system (at least the part currently used by Samedi) appears to sometimes have issues with very short audio files. Those appear to play part a of the start of the sample at the end as well. Or add some noise to the end. Not ideal in case of short drum samples, for example<br />
+In this case, it may help to add a few seconds of silence to the end of the sample with an audio editor. Oh bother, I know…</p></li>
+<li><p>More than one instance of Samedi can run simultaneously, if you need more than 8 pads.</p></li>
+<li><p>More than one pad can react to the same MIDI note, in case you want to play back several samples with hitting a single key.</p></li>
+<li><p>You can select more than one device from the <span class="menu">MIDI-in</span> menu as sources for MIDI notes.</p></li>
+</ul>
 
 <h2>
 <a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
@@ -70,13 +84,17 @@ play_buffer_count	4
 <a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
 <a id="bugs_feedback" name="bugs_feedback">Bugreports &amp; Feedback</a></h2>
 
-<p>Please use GitHub's <a href="https://github.com/humdingerb/samedi/issues">issue tracker</a> if you experience unusual difficulties or have other suggestions. You can help translating Samedi at <a href="https://i18n.kacperkasper.pl/projects/">Polyglot</a>.</p>
+<p>Please use GitHub's <a href="https://github.com/humdingerb/samedi/issues">issue tracker</a> if you experience unusual difficulties or have more tips &amp; tricks or other suggestions. You can help translating Samedi at <a href="https://i18n.kacperkasper.pl/projects/">Polyglot</a>.</p>
 
-
-<!--<h2>
+<h2>
 <a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
 <a id="history" name="history">History</a></h2>
--->
+
+<p><b>1.0.0</b> - <i>18-04-2023:</i></p>
+<ul>
+<li>Initial release</li>
+</ul>
+
 </div>
 </body>
 </html>
