@@ -1,10 +1,9 @@
-1	English	application/x-vnd.humdinger-Samedi	90237234
+1	English	application/x-vnd.humdinger-Samedi	81363813
 Clear all pads	MainWindow		Clear all pads
 Sample file	MainWindow		Sample file
 <click to load a sample>	Pad		<click to load a sample>
 MIDI in	MainWindow		MIDI in
 Modes	MainWindow	Header, as short as the English term if possible	Modes
-MIDI note	Pad		MIDI note
 Quit	MainWindow		Quit
 Mute	Pad		Mute
 Samedi: Open sample	MainWindow		Samedi: Open sample

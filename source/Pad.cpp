@@ -301,7 +301,7 @@ Pad::_SetDetectMode(bool state)
 		BString text;
 		text << fNote;
 		fNoteControl->SetText(text);
-		fNoteControl->SetToolTip(B_TRANSLATE("MIDI note"));
+		fNoteControl->SetToolTip("");
 		fNoteControl->MakeFocus(false);
 		fNoteControl->MarkAsInvalid(false);
 	}
