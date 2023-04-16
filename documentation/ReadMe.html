@@ -18,7 +18,8 @@ for <a href="https://www.haiku-os.org">Haiku</a></p>
 </div>
 
 <div id="content">
-<p>Samedi is a little app to load audio samples into up to 8 pads and assign them to MIDI notes. The samples can then be played back by pressing the set key on your MIDI keyboard. Alternatively Samedi also reacts to the number keys on your computer keyboard.</p>
+<p>Samedi is a little app to load audio samples into up to 8 pads and assign them to MIDI notes. The samples can then be played back by pressing the set key on your MIDI keyboard. Alternatively Samedi also reacts to the number keys on your computer keyboard.<br />
+If you suffer from high latency, see the tip on <a href="#latency">Latency</a> below.</p>
 
 <div align = "center">
 <img src="./images/window.png" alt="Samedi's window" />
@@ -38,6 +39,26 @@ You can enter the MIDI note in the text box on the left, or detect the pressed k
 <p>The menu <span class="menu">Midi in</span> shows all detected MIDI producers in the system. If there are more than one, you can choose the one Samedi will listen on.</p>
 
 <p>To empty a pad, click the <span class="button">⏏</span> button at the far right.</p>
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="latency" name="latency">La…tency</a></h2>
+
+<p>If you experience relatively long delays between hitting a key and hearing a sound, your sound driver's buffers may be too large. Until Haiku allows tweaking those settings in the <a href="https://www.haiku-os.org/docs/userguide/en/preferences/media.html">Media preferences</a>, you can edit a text settings file.<br />
+There are examples for most common chipsets:<br />
+<a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/hda/hda.settings">hda.settings</a>, <a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/ac97/auich/auich.settings">auich.settings</a>, <a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/ac97/es1370/es1370.settings">es1370.settings</a>, <a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/echo/echo.settings">echo.settings</a>, <a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/emuxki/emuxki.settings">emuxki.settings</a>, and <a href="https://cgit.haiku-os.org/haiku/plain/src/add-ons/kernel/drivers/audio/ice1712/ice1712.settings">ice1712.settings</a>.</p>
+
+<p>To find which driver settings file you need, open Terminal and enter "<tt>listimage | grep /dev/audio</tt>" - the output should give you a hint. 
+Then download the right settings file and put it into <tt>/boot/home/config/settings/kernel/drivers/</tt> and open it for editing.</p>
+
+<p>Large buffers allow for trouble-free, continuous playback with low ressources even in a taxed system, but they increase the time the sound starts playing. When setting those buffers, you'll have to compromise to find values that fit your needs. For the HDA chipset, for example, Pete Goodeve found that "<i>for real time audio, a buffer of 1024 frames at 192000 should be good (latency <15ms), but you will need more buffers if they're small.</i>".<br />
+So, remove the commenting "#" of those lines and try with:</p>
+<pre>
+play_buffer_frames	1024
+play_buffer_count	4
+</pre>
+<p>The settings files of other chipsets use different keywords, but generally work similarly.</p>
+<p>To try out your new settings, click on <span class="button">Restart media services</span> of the "Audio settings" of the Media preferences.</p>
 
 <h2>
 <a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
