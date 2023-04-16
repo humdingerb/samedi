@@ -1,4 +1,5 @@
-1	English	application/x-vnd.humdinger-Samedi	1485106125
+1	English	application/x-vnd.humdinger-Samedi	90237234
+Clear all pads	MainWindow		Clear all pads
 Sample file	MainWindow		Sample file
 <click to load a sample>	Pad		<click to load a sample>
 MIDI in	MainWindow		MIDI in
@@ -7,23 +8,23 @@ MIDI note	Pad		MIDI note
 Quit	MainWindow		Quit
 Mute	Pad		Mute
 Samedi: Open sample	MainWindow		Samedi: Open sample
-Open ensemble…	MainWindow		Open ensemble…
+Ensemble	MainWindow		Ensemble
 If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.	App		If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.
 Samedi	System name		Samedi
 Press key	Pad		Press key
 Solo	Pad		Solo
-Save ensemble…	MainWindow		Save ensemble…
 ⚠ - Failed loading '%samplefile%'	Pad		⚠ - Failed loading '%samplefile%'
 Help…	MainWindow		Help…
 Samedi: Open ensemble	MainWindow		Samedi: Open ensemble
 Open recent	MainWindow		Open recent
 Loop	Pad		Loop
 Save	MainWindow		Save
-File	MainWindow		File
 Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.	App		Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.
 Show latency help	App		Show latency help
 Cancel	App		Cancel
+Save as…	MainWindow		Save as…
 Samedi: Save ensemble	MainWindow		Samedi: Save ensemble
 MIDI note	MainWindow	Header, as short as the English term if possible	MIDI note
 About Samedi	MainWindow		About Samedi
 Detect MIDI note	Pad		Detect MIDI note
+Open…	MainWindow		Open…

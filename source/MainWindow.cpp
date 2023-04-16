@@ -218,6 +218,16 @@ MainWindow::MessageReceived(BMessage* msg)
 			}
 			break;
 		}
+		case CLEARALL:
+		{
+			int32 note = kDefaultNote;
+			BString samplepath = "";
+			for (int32 i = 0; i < kPadCount; i++) {
+				_SetNote(i, note++);
+				_SetSample(i, samplepath);
+			}
+			break;
+		}
 		case MIDI_IN_MENU:
 		{
 			int32 id = msg->FindInt32("port_id");
@@ -322,8 +332,8 @@ MainWindow::_BuildMenu()
 	menuBar->AddItem(menu);
 
 	// menu File
-	menu = new BMenu(B_TRANSLATE("File"));
-	item = new BMenuItem(B_TRANSLATE("Open ensemble" B_UTF8_ELLIPSIS),
+	menu = new BMenu(B_TRANSLATE("Ensemble"));
+	item = new BMenuItem(B_TRANSLATE("Open" B_UTF8_ELLIPSIS),
 		new BMessage(OPEN_ENSEMBLE), 'O');
 	menu->AddItem(item);
 
@@ -335,8 +345,13 @@ MainWindow::_BuildMenu()
 	fSaveMenu->SetEnabled(false);
 	menu->AddItem(fSaveMenu);
 
-	item = new BMenuItem(B_TRANSLATE("Save ensemble" B_UTF8_ELLIPSIS),
+	item = new BMenuItem(B_TRANSLATE("Save as" B_UTF8_ELLIPSIS),
 		new BMessage(SAVE_AS_ENSEMBLE), 'S', B_SHIFT_KEY);
+	menu->AddItem(item);
+
+	menu->AddSeparatorItem();
+
+	item = new BMenuItem(B_TRANSLATE("Clear all pads"),	new BMessage(CLEARALL), 'D', B_SHIFT_KEY);
 	menu->AddItem(item);
 	menuBar->AddItem(menu);
 
