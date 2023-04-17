@@ -27,8 +27,8 @@ public:
 					MainWindow();
 	virtual			~MainWindow();
 
-	void			MenusBeginning();
-	void			MessageReceived(BMessage* msg);
+	virtual void	MenusBeginning();
+	virtual void	MessageReceived(BMessage* msg);
 
 private:
 	BMenuBar*		_BuildMenu();

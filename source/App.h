@@ -19,8 +19,9 @@ public:
 					App();
 	virtual			~App();
 
-	void			AboutRequested();
-	void			MessageReceived(BMessage* msg);
+	virtual void	AboutRequested();
+	virtual	void	ArgvReceived(int32 argc, char** argv);
+	virtual	void	MessageReceived(BMessage* msg);
 
 private:
 	void			_ShowLatencyAlert();

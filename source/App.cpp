@@ -51,6 +51,26 @@ App::AboutRequested()
 
 
 void
+App::ArgvReceived(int32 argc, char** argv)
+{
+	BMessenger messenger(fMainWindow);
+	BMessage message(B_REFS_RECEIVED);
+
+	BEntry entry(argv[1], true); // traverse links
+	entry_ref ref;
+	entry.GetRef(&ref);
+
+	if (entry.Exists())
+		message.AddRef("refs", &ref);
+	else {
+		printf("%s: Ensemble not found: %s\n", argv[0], argv[1]);
+		return;
+	}
+	messenger.SendMessage(&message);
+}
+
+
+void
 App::MessageReceived(BMessage* msg)
 {
 	switch (msg->what) {
