@@ -37,6 +37,11 @@ Pad::Pad(int32 number, int32 note)
 	BString noteNr;
 	noteNr << fNote;
 	fNoteControl = new BTextControl("notecontrol", padNr, noteNr, new BMessage(NOTE));
+	// only allow numbers
+	for (uint32 i = 0; i < '0'; i++)
+		fNoteControl->TextView()->DisallowChar(i);
+	for (uint32 i = '9' + 1; i < 255; i++)
+		fNoteControl->TextView()->DisallowChar(i);
 
 	fDetectButton = new BButton("detect" , new BMessage(DETECT_NOTE));
 	fDetectButton->SetBehavior(BButton::B_TOGGLE_BEHAVIOR);
@@ -151,7 +156,13 @@ Pad::MessageReceived(BMessage* msg)
 	switch (msg->what) {
 		case NOTE:
 		{
-			fNote = atoi(fNoteControl->Text());
+			BString newNote = fNoteControl->Text();
+			if (newNote == "") {
+				newNote << fNote;
+				fNoteControl->SetText(newNote);
+			} else
+				fNote = atoi(newNote);
+
 			fNoteControl->MakeFocus(false);
 
 			if (fDetectButton->Value() == B_CONTROL_ON)
@@ -161,7 +172,6 @@ Pad::MessageReceived(BMessage* msg)
 		}
 		case DETECT_NOTE:
 		{
-			BString note;
 			if (fDetectButton->Value() == B_CONTROL_ON) {
 				fNoteControl->SetText("?");
 				_SetDetectMode(true);
