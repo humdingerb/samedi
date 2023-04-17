@@ -51,6 +51,7 @@ private:
 	BButton*		fLoopButton;
 	BButton*		fSampleButton;
 	BButton*		fPlayButton;
+	BButton*		fStopButton;
 	BButton*		fEjectButton;
 
 	BTextControl*	fNoteControl;

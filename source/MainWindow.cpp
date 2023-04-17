@@ -415,7 +415,7 @@ MainWindow::_BuildHeaderView()
 	modes->SetExplicitSize(BSize(height * 3, B_SIZE_UNSET));
 	fPads[0]->FindView("sample")->GetPreferredSize(&width, &height);
 	sample->SetExplicitSize(BSize(width, B_SIZE_UNSET));
-	dummy->SetExplicitSize(BSize(height * 2, B_SIZE_UNSET));
+	dummy->SetExplicitSize(BSize(height * 3, B_SIZE_UNSET));
 
 	const float kSpacing = be_control_look->DefaultItemSpacing();
 	BView* headerView = new BView("headerView", B_SUPPORTS_LAYOUT);

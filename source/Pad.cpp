@@ -59,6 +59,7 @@ Pad::Pad(int32 number, int32 note)
 	fSampleButton->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNLIMITED));
 
 	fPlayButton = new BButton("⯈" , new BMessage(PLAY));
+	fStopButton = new BButton("⏹" , new BMessage(STOP));
 	fEjectButton = new BButton("⏏" , new BMessage(EJECT));
 
 	// limit widget sizes
@@ -69,6 +70,7 @@ Pad::Pad(int32 number, int32 note)
 	fSoloButton->SetExplicitSize(size);
 	fLoopButton->SetExplicitSize(size);
 	fPlayButton->SetExplicitSize(size);
+	fStopButton->SetExplicitSize(size);
 	fEjectButton->SetExplicitSize(size);
 
 	float width = height * 0.7;
@@ -95,6 +97,7 @@ Pad::Pad(int32 number, int32 note)
 		.Add(fSampleButton)
 		.AddStrut(B_USE_SMALL_SPACING)
 		.Add(fPlayButton)
+		.Add(fStopButton)
 		.Add(fEjectButton)
 	.End();
 
@@ -119,6 +122,7 @@ Pad::AttachedToWindow()
 	fLoopButton->SetTarget(this);
 	fSampleButton->SetTarget(this);
 	fPlayButton->SetTarget(this);
+	fStopButton->SetTarget(this);
 	fEjectButton->SetTarget(this);
 }
 
@@ -137,7 +141,6 @@ Pad::KeyDown(const char* bytes, int32 numBytes)
 		if (key == '0' + fPadNumber + 1)
 			BMessenger(this).SendMessage(new BMessage(PLAY));
 	}
-
 	BView::KeyDown(bytes, numBytes);
 }
 
@@ -194,6 +197,12 @@ Pad::MessageReceived(BMessage* msg)
 		{
 			if ((fPlayer != NULL) && (fMuteButton->Value() == B_CONTROL_OFF))
 				fPlayer->StartPlaying();
+			break;
+		}
+		case STOP:
+		{
+			if (fPlayer != NULL)
+				fPlayer->StopPlaying();
 			break;
 		}
 		case EJECT:

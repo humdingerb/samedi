@@ -17,6 +17,7 @@
 #define LOOP 'loop'
 #define PLAY 'plst'
 #define EJECT 'ejec'
+#define STOP 'stop'
 #define OPEN_SAMPLE 'osam'
 #define LOAD_SAMPLE 'lsam'
 
