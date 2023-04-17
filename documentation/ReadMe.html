@@ -71,8 +71,9 @@ play_buffer_count	4
 <a id="tips" name="tips">Tips &amp; Tricks</a></h2>
 <p>The tip how to decrease latency above is probably the most vital. Here are a few more less spectacular ones:</p>
 <ul>
-<li><p>Haiku's sound system (at least the part currently used by Samedi) appears to sometimes have issues with very short audio files. Those appear to play part a of the start of the sample at the end as well. Or add some noise to the end. Not ideal in case of short drum samples, for example<br />
+<li><p>Haiku's sound system (at least the part currently used by Samedi) appears to sometimes have issues with very short audio files, see <a href="https://dev.haiku-os.org/ticket/18365">Haiku ticket #18365</a>. Those appear to play part a of the start of the sample at the end as well. Or add some noise to the end. Not ideal in case of short drum samples, for example<br />
 In this case, it may help to add a few seconds of silence to the end of the sample with an audio editor. Oh bother, I know…</p></li>
+<li><p>You can launch Samedi with an ensemble-file as parameter from the commandline or a script.</p></li>
 <li><p>More than one instance of Samedi can run simultaneously, if you need more than 8 pads.</p></li>
 <li><p>More than one pad can react to the same MIDI note, in case you want to play back several samples with hitting a single key.</p></li>
 <li><p>You can select more than one device from the <span class="menu">MIDI in</span> menu as sources for MIDI notes.</p></li>
