@@ -16,15 +16,16 @@
 
 class App : public BApplication {
 public:
-						App();
-		virtual			~App();
+					App();
+	virtual			~App();
 
-		void			AboutRequested();
+	void			AboutRequested();
+	void			MessageReceived(BMessage* msg);
 
 private:
-		void			_ShowLatencyAlert();
+	void			_ShowLatencyAlert();
 
-		MainWindow*		fMainWindow;
+	MainWindow*		fMainWindow;
 };
 
 #endif /* APP_H */

@@ -9,6 +9,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#define FIRST_LAUNCH '1stl'
 
 #define NOTE 'note'
 #define MUTE 'mute'

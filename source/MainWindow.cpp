@@ -528,7 +528,6 @@ MainWindow::_HandleMIDI(BMessage* msg)
 void
 MainWindow::_LoadSettings()
 {
-	fFirstLaunch = false;
 	fSettings = new BMessage();
 
 	BPath path;
@@ -539,7 +538,7 @@ MainWindow::_LoadSettings()
 	BFile file(path.Path(), B_READ_ONLY);
 
 	if (file.InitCheck() != B_OK)
-		fFirstLaunch = true;
+		be_app->PostMessage(new BMessage(FIRST_LAUNCH));
 
 	if (fSettings->Unflatten(&file) != B_OK)
 		fSettings->AddRect("main window frame", BRect(200, 200, 600, 300));

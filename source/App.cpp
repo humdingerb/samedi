@@ -28,9 +28,6 @@ App::App()
 {
 	fMainWindow = new MainWindow();
 	fMainWindow->Show();
-
-	if (fMainWindow->IsFirstLaunch())
-		_ShowLatencyAlert();
 }
 
 
@@ -50,6 +47,24 @@ App::AboutRequested()
 		"via notes played over MIDI."));
 	aboutW->AddCopyright(2023, "Humdinger");
 	aboutW->Show();
+}
+
+
+void
+App::MessageReceived(BMessage* msg)
+{
+	switch (msg->what) {
+		case FIRST_LAUNCH:
+		{
+			_ShowLatencyAlert();
+			break;
+		}
+		default:
+		{
+			BApplication::MessageReceived(msg);
+			break;
+		}
+	}
 }
 
 

@@ -10,4 +10,4 @@ For more information, especially how to decrease latency, please see the [Samedi
 
 It's very easy, just a ```make``` followed by ```make bindcatalogs``` to include translations.
 
-The contents of the "documentation" folder needs to be copied to, for example, ```/boot/home/config/non-packaged/documentation/packages/Samedi```.
+For the Help menu to work, the contents of the "documentation" folder needs to be copied to, for example, ```/boot/home/config/non-packaged/documentation/packages/Samedi```.
