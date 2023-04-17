@@ -22,6 +22,7 @@ public:
 	virtual void	AboutRequested();
 	virtual	void	ArgvReceived(int32 argc, char** argv);
 	virtual	void	MessageReceived(BMessage* msg);
+	virtual void 	RefsReceived(BMessage* msg);
 
 private:
 	void			_ShowLatencyAlert();

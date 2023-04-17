@@ -89,6 +89,16 @@ App::MessageReceived(BMessage* msg)
 
 
 void
+App::RefsReceived(BMessage* message)
+{
+	fMainWindow->PostMessage(message);
+}
+
+
+// #pragma mark -
+
+
+void
 App::_ShowLatencyAlert()
 {
 	BString text(B_TRANSLATE("If you experience delays between hitting a key and "
