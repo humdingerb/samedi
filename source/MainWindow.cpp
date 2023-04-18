@@ -25,6 +25,7 @@
 #include <ScrollView.h>
 #include <SeparatorView.h>
 #include <StringView.h>
+#include <Volume.h>
 
 #include <compat/sys/stat.h>
 #include <stdio.h>
@@ -56,6 +57,12 @@ AudioFilter::Filter(const entry_ref* ref, BNode* node, struct stat_beos* stat,
 	BNode traversedNode(&entry); // create a new node from the link-traversed BEntry
 	BNodeInfo(&traversedNode).GetType(mimeType);
 	if (strncmp("audio/", mimeType, 6) == 0)
+		return true;
+
+	// allow all, if volume doesn't know MIME
+	BVolume volume;
+	volume.SetTo((ref->device));
+	if (volume.KnowsMime() == false)
 		return true;
 
 	return false;
