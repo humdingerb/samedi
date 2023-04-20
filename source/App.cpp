@@ -118,14 +118,20 @@ App::_ShowLatencyAlert()
 			BPathFinder pathFinder;
 			BStringList paths;
 			BPath path;
+			BEntry entry;
 
-			pathFinder.FindPaths(B_FIND_PATH_DOCUMENTATION_DIRECTORY,
-				"packages/Samedi", paths);
-			if (!paths.IsEmpty()) {
-				if (path.SetTo(paths.StringAt(0)) == B_OK) {
+			status_t error = pathFinder.FindPaths(B_FIND_PATH_DOCUMENTATION_DIRECTORY,
+				"packages/samedi", paths);
+
+			for (int i = 0; i < paths.CountStrings(); ++i) {
+				if (error == B_OK && path.SetTo(paths.StringAt(i)) == B_OK
+					&& path.Append("ReadMe.html") == B_OK) {
+					entry = path.Path();
+					if (!entry.Exists())
+						continue;
 					BMessage message(B_REFS_RECEIVED);
 					BString url;
-					url << "file://" << path.Path() << "/ReadMe.html#latency";
+					url << "file://" << path.Path() << "#latency";
 					message.AddString("url", url);
 					be_roster->Launch("text/html", &message);
 				}

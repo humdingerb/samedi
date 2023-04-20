@@ -57,7 +57,7 @@ There are examples for most common chipsets:<br />
 <p>To find which driver settings file you need, open Terminal and enter "<tt>listimage | grep /dev/audio</tt>" - the output should give you a hint. 
 Then download the right settings file and put it into <tt>/boot/home/config/settings/kernel/drivers/</tt> and open it for editing.</p>
 
-<p>Large buffers allow for trouble-free, continuous playback with low ressources even in a taxed system, but they increase the time the sound starts playing. When setting those buffers, you'll have to compromise to find values that fit your needs. For the HDA chipset, for example, Pete Goodeve found that "<i>for real time audio, a buffer of 1024 frames at 192000 should be good (latency <15ms), but you will need more buffers if they're small.</i>".<br />
+<p>Large buffers allow for trouble-free, continuous playback with low ressources even in a taxed system, but they increase the time the sound starts playing. When setting those buffers, you'll have to compromise to find values that fit your needs. For the HDA chipset, for example, Pete Goodeve found that "<i>for real time audio, a buffer of 1024 frames at 192000 should be good (latency &lt;15ms), but you will need more buffers if they're small</i>".<br />
 So, remove the commenting "#" of those lines and try with:</p>
 <pre>
 play_buffer_frames	1024
