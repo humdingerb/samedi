@@ -1,0 +1,29 @@
+1	Dutch	application/x-vnd.humdinger-Samedi	81363813
+<click to load a sample>	Pad		<click om een sample to laden>
+⚠ - Failed loading '%samplefile%'	Pad		⚠ - fout bij laden '%samplefile%'
+Detect MIDI note	Pad		Detecteer MIDI noot
+Loop	Pad		Loop
+Mute	Pad		Mute
+Press key	Pad		Druk toets
+Solo	Pad		Solo
+About Samedi	MainWindow		Over Samedi
+Clear all pads	MainWindow		Alle pads wissen
+Ensemble	MainWindow		Ensemble
+Help…	MainWindow		Help…
+MIDI in	MainWindow		MIDI in
+MIDI note	MainWindow	Header, as short as the English term if possible	MIDI noot
+Modes	MainWindow	Header, as short as the English term if possible	Modes
+Open recent	MainWindow		Open recent
+Open…	MainWindow		Openen…
+Quit	MainWindow		Afsluiten
+Samedi: Open ensemble	MainWindow		Samedi: Ensemble openen
+Samedi: Open sample	MainWindow		Samedi: Sample openen
+Samedi: Save ensemble	MainWindow		Samedi: Ensemble opslaan
+Sample file	MainWindow		Sample bestand
+Save	MainWindow		Opslaan
+Save as…	MainWindow		Opslaan als…
+Cancel	App		Annuleren
+If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.	App		Als je vertraging ondervind bij het aanslaan van een toets en het horen van geluid, raadpleeg dan de 'Latency' sectie van Samedi's Help document.
+Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.	App		Samedi biedt 8 pads voor het laden van audiosamples, die kunnen worden geactiveerd via noten die via MIDI worden gespeeld.
+Show latency help	App		Toon latency help
+Samedi	System name		Samedi

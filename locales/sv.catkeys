@@ -1,0 +1,29 @@
+1	Swedish	application/x-vnd.humdinger-Samedi	81363813
+<click to load a sample>	Pad		<klicka för att ladda ett prov>
+⚠ - Failed loading '%samplefile%'	Pad		⚠ - Det gick inte att ladda '%samplefile%'
+Detect MIDI note	Pad		Upptäcka  MIDI notera
+Loop	Pad		Slinga
+Mute	Pad		Mute
+Press key	Pad		Tryck tangent
+Solo	Pad		Ensam
+About Samedi	MainWindow		Om Samedi
+Clear all pads	MainWindow		Rensa alla kuddar
+Ensemble	MainWindow		Ensemble
+Help…	MainWindow		Hjälp…
+MIDI in	MainWindow		MIDI in
+MIDI note	MainWindow	Header, as short as the English term if possible	MIDI notera
+Modes	MainWindow	Header, as short as the English term if possible	Lägen
+Open recent	MainWindow		Öppna senaste
+Open…	MainWindow		Öppen…
+Quit	MainWindow		Sluta
+Samedi: Open ensemble	MainWindow		Samedi: Öppen ensemble
+Samedi: Open sample	MainWindow		Samedi: Öppna provet
+Samedi: Save ensemble	MainWindow		Samedi: Spara ensemble
+Sample file	MainWindow		Prov fil
+Save	MainWindow		Spara
+Save as…	MainWindow		Spara som…
+Cancel	App		Avbryt
+If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.	App		Om du upplever förseningar mellan att slå på en tangent och höra ett ljud, se avsnittet 'Latens' i Samedis hjälpdokument.
+Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.	App		Samedi tillhandahåller 8 pads för att ladda ljudsampel, som kan triggas via noter som spelas över MIDI.
+Show latency help	App		Visa latenshjälp
+Samedi	System name		Samedi

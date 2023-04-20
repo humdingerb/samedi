@@ -1,14 +1,13 @@
-1	German	application/x-vnd.humdinger-Samedi	1700857530
+1	German	application/x-vnd.humdinger-Samedi	81363813
 <click to load a sample>	Pad		<Klicken um Sample zu laden>
 ⚠ - Failed loading '%samplefile%'	Pad		⚠ - Fehler beim Laden von '%samplefile%'
 Detect MIDI note	Pad		MIDI Note erkennen
 Loop	Pad		Loop
-MIDI note	Pad		MIDI Note
 Mute	Pad		Stumm
 Press key	Pad		Taste drücken
 Solo	Pad		Solo
 About Samedi	MainWindow		Über Samedi
-Clear all pads…	MainWindow		Alle Pads leeren…
+Clear all pads	MainWindow		Alle Pads leeren
 Ensemble	MainWindow		Ensemble
 Help…	MainWindow		Hilfe…
 MIDI in	MainWindow		MIDI-in

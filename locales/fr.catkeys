@@ -1,0 +1,29 @@
+1	French	application/x-vnd.humdinger-Samedi	81363813
+<click to load a sample>	Pad		<cliquer pour charger un échantillon>
+⚠ - Failed loading '%samplefile%'	Pad		⚠ - Le chargement de '%samplefile%' a échoué
+Detect MIDI note	Pad		Détecter la note MIDI
+Loop	Pad		Boucle
+Mute	Pad		Muet
+Press key	Pad		Presser une touche
+Solo	Pad		Solo
+About Samedi	MainWindow		À propos de Samedi
+Clear all pads	MainWindow		Efface tous les tampons
+Ensemble	MainWindow		Ensemble
+Help…	MainWindow		Aide…
+MIDI in	MainWindow		Entrée MIDI
+MIDI note	MainWindow	Header, as short as the English term if possible	Note MIDI
+Modes	MainWindow	Header, as short as the English term if possible	Modes
+Open recent	MainWindow		Ouvrir récent
+Open…	MainWindow		Ouvrir…
+Quit	MainWindow		Quitter
+Samedi: Open ensemble	MainWindow		Samedi: Ouvrir un ensemble
+Samedi: Open sample	MainWindow		Samedi: Ouvrir un échantillon
+Samedi: Save ensemble	MainWindow		Samedi: Enregistrer l'ensemble
+Sample file	MainWindow		Fichier d'échantillon
+Save	MainWindow		Sauvegarder
+Save as…	MainWindow		Enregistrer sous…
+Cancel	App		Annuler
+If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.	App		Si vous rencontrez des délais entre l'appui sur une touche et l'écoute d'un son, reportez-vous svp à la section 'Latence' du document d'aide de Samedi.
+Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.	App		Samedi fournit 8 tampons pour charger des échantillons audio dont la lecture est déclenchée en jouant des notes MIDI.
+Show latency help	App		Montrer l'aide sur la latence
+Samedi	System name		Samedi

@@ -1,0 +1,29 @@
+1	Turkish	application/x-vnd.humdinger-Samedi	81363813
+<click to load a sample>	Pad		<örnek yüklemek için tıkla>
+⚠ - Failed loading '%samplefile%'	Pad		⚠ - '%samplefile%' yüklenemedi
+Detect MIDI note	Pad		MIDI noktasını algıla
+Loop	Pad		Döngü
+Mute	Pad		Sessize al
+Press key	Pad		Düğmeye bas
+Solo	Pad		Solo
+About Samedi	MainWindow		Samedi hakkında
+Clear all pads	MainWindow		Tüm pedleri temizle
+Ensemble	MainWindow		Grup
+Help…	MainWindow		Yardım…
+MIDI in	MainWindow		MIDI girişi
+MIDI note	MainWindow	Header, as short as the English term if possible	MIDI notası
+Modes	MainWindow	Header, as short as the English term if possible	Kipler
+Open recent	MainWindow		Son kullanılanları aç
+Open…	MainWindow		Aç…
+Quit	MainWindow		Çık
+Samedi: Open ensemble	MainWindow		Samedi: Grup aç
+Samedi: Open sample	MainWindow		Samedi: Örnek aç
+Samedi: Save ensemble	MainWindow		Samedi: Grubu kaydet
+Sample file	MainWindow		Örnek dosya
+Save	MainWindow		Kaydet
+Save as…	MainWindow		Farklı kaydet…
+Cancel	App		Vazgeç
+If you experience delays between hitting a key and hearing a sound, please see the 'Latency' section of Samedi's Help document.	App		Bir düğmeye basma ve ses duyma arasında gecikmeler yaşıyorsanız Samedi’nin yardım belgelerinin 'Latency' (Gecikme) bölümüne bakın.
+Samedi provides 8 pads for loading audio samples, which can be triggered via notes played over MIDI.	App		Samedi, MIDI üzerinden çalınan notlarla tetiklenebilen ses örnekleri yüklemek için 8 adet ped sunar.
+Show latency help	App		Gecikme yardımını göster
+Samedi	System name		Samedi
