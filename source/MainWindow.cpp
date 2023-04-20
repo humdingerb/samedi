@@ -74,9 +74,6 @@ MainWindow::MainWindow()
 	BWindow(BRect(200, 200, 600, 300), B_TRANSLATE_SYSTEM_NAME("Samedi"), B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_ASYNCHRONOUS_CONTROLS | B_QUIT_ON_WINDOW_CLOSE
 			| B_AUTO_UPDATE_SIZE_LIMITS),
-	fOpenSamplePanel(new BFilePanel(B_OPEN_PANEL)),
-	fOpenEnsemblePanel(new BFilePanel(B_OPEN_PANEL)),
-	fSaveEnsemblePanel(new BFilePanel(B_SAVE_PANEL)),
 	fRecentEnsemblePaths(10),
 	fSettings(NULL)
 {
@@ -90,6 +87,25 @@ MainWindow::MainWindow()
 			ResizeTo(frame.Width(), frame.Height());
 		}
 	}
+
+	// init file panels
+	BMessenger messenger(this);
+	entry_ref ref;
+
+	fSettings->FindRef("last sample folder", &ref);
+	fOpenSamplePanel = new BFilePanel(B_OPEN_PANEL, &messenger, &ref, B_FILE_NODE, false,
+		NULL, new AudioFilter());
+	fOpenSamplePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open sample"));
+
+	fSettings->FindRef("last ensemble folder", &ref);
+	BMessage message(B_REFS_RECEIVED);
+	fOpenEnsemblePanel = new BFilePanel(B_OPEN_PANEL, &messenger, &ref, B_FILE_NODE, false,
+		&message);
+	fOpenEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open ensemble"));
+
+	fSettings->FindRef("last ensemble save folder", &ref);
+	fSaveEnsemblePanel = new BFilePanel(B_SAVE_PANEL, &messenger, &ref, B_FILE_NODE, false);
+	fSaveEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Save ensemble"));
 
 	// init pads
 	for (int32 i = 0; i < kPadCount; i++)
@@ -125,13 +141,13 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+	_SaveSettings();
+
 	fConsumer->Release();
 	delete fOpenSamplePanel;
 	delete fOpenEnsemblePanel;
 	delete fSaveEnsemblePanel;
 	delete fMessenger;
-
-	_SaveSettings();
 }
 
 
@@ -180,10 +196,6 @@ MainWindow::MessageReceived(BMessage* msg)
 		}
 		case OPEN_ENSEMBLE:
 		{
-			BMessage* openMsg = new BMessage(B_REFS_RECEIVED);
-			fOpenEnsemblePanel->SetTarget(this);
-			fOpenEnsemblePanel->SetMessage(openMsg);
-			fOpenEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open ensemble"));
 			fOpenEnsemblePanel->Show();
 			break;
 		}
@@ -206,9 +218,6 @@ MainWindow::MessageReceived(BMessage* msg)
 		}
 		case SAVE_AS_ENSEMBLE:
 		{
-			BMessenger messenger(this);
-			fSaveEnsemblePanel->SetTarget(this);
-			fSaveEnsemblePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Save ensemble"));
 			fSaveEnsemblePanel->Show();
 			break;
 		}
@@ -285,10 +294,7 @@ MainWindow::MessageReceived(BMessage* msg)
 			if (msg->FindInt32("pad", &pad) == B_OK) {
 				BMessage* openMsg = new BMessage(LOAD_SAMPLE);
 				openMsg->AddInt32("pad", pad);
-				fOpenSamplePanel->SetTarget(this);
 				fOpenSamplePanel->SetMessage(openMsg);
-				fOpenSamplePanel->SetRefFilter(new AudioFilter());
-				fOpenSamplePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open sample"));
 				fOpenSamplePanel->Show();
 			}
 			break;
@@ -566,6 +572,16 @@ MainWindow::_SaveSettings()
 
 	for (int32 i = 0; i < fRecentEnsemblePaths.CountStrings(); i++)
 		settings.AddString("recent ensemble", fRecentEnsemblePaths.StringAt(i));
+
+	entry_ref ref;
+	fOpenSamplePanel->GetPanelDirectory(&ref);
+	settings.AddRef("last sample folder", &ref);
+
+	fOpenEnsemblePanel->GetPanelDirectory(&ref);
+	settings.AddRef("last ensemble folder", &ref);
+
+	fSaveEnsemblePanel->GetPanelDirectory(&ref);
+	settings.AddRef("last ensemble save folder", &ref);
 
 	path.Append("Samedi_settings");
 	BFile file(path.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
