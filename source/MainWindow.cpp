@@ -95,7 +95,6 @@ MainWindow::MainWindow()
 	fSettings->FindRef("last sample folder", &ref);
 	fOpenSamplePanel = new BFilePanel(B_OPEN_PANEL, &messenger, &ref, B_FILE_NODE, false,
 		NULL, new AudioFilter());
-	fOpenSamplePanel->Window()->SetTitle(B_TRANSLATE("Samedi: Open sample"));
 
 	fSettings->FindRef("last ensemble folder", &ref);
 	BMessage message(B_REFS_RECEIVED);
@@ -295,6 +294,10 @@ MainWindow::MessageReceived(BMessage* msg)
 				BMessage* openMsg = new BMessage(LOAD_SAMPLE);
 				openMsg->AddInt32("pad", pad);
 				fOpenSamplePanel->SetMessage(openMsg);
+
+				BString title(B_TRANSLATE("Samedi: Open sample"));
+				title << " #" << pad + 1;
+				fOpenSamplePanel->Window()->SetTitle(title);
 				fOpenSamplePanel->Show();
 			}
 			break;
