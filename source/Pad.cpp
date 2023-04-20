@@ -112,8 +112,11 @@ Pad::Pad(int32 number, int32 note)
 
 Pad::~Pad()
 {
-	if (fPlayer != NULL)
+	if (fPlayer != NULL) {
+		fPlayer->StopPlaying();
+		fPlayer = NULL;
 		delete fPlayer;
+	}
 }
 
 
@@ -281,8 +284,11 @@ Pad::SetSample(BPath sample)
 	}
 
 	fSamplePath = sample;
-	if (fPlayer != NULL)
+	if (fPlayer != NULL) {
+		fPlayer->StopPlaying();
+		fPlayer = NULL;
 		delete fPlayer;
+	}
 
 	fPlayer = new BFileGameSound(fSamplePath.Path(), fLoopButton->Value() == B_CONTROL_ON);
 	if (fPlayer->InitCheck() == B_OK) {
