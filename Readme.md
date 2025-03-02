@@ -1,3 +1,8 @@
+* * *
+This repository is in archived, read-only mode.
+Samedi development continues at [Codeberg](https://codeberg.org/humdinger/samedi).
+* * *
+
 ![Samedi icon](./documentation/images/samedi_icon_64.png) **Samedi** for [Haiku](https://www.haiku-os.org)
 
 * * *
